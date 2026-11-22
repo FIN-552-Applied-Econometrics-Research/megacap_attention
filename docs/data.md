@@ -18,6 +18,10 @@ so everyone's copy matches the code.
 | `data/raw/crsp_daily.parquet` | `src/04_sue.py` | WRDS `crsp.dsf_v2` (sample PERMNOs) | 5,527,421 | 2017-10 to 2025-12 | Done |
 | `data/processed/sue.parquet` | `src/04_sue.py` | WRDS `ibes.actu_epsus`, `ibes.statsumu_epsus`, `crsp.dsf_v2` | 59,775 | 2018 to 2025 | Done |
 | `data/processed/links.parquet` | `src/03_links.py` | WRDS `comp.company`, `crsp.ccmxpf_lnkhist`, `wrdsapps` ibcrsphist, `crsp.stksecurityinfohist` | 105,088 (82,735 in sample) | 2018 to 2025 | Done |
+| `data/raw/crsp_daily_pre.parquet`, `wrds_market.parquet` | `src/06_car.py` | WRDS `crsp.dsf_v2` (Nov 2016 – Sep 2017), CRSP VW index (indno 1000200) | | 2016-11 to 2025-12 | Done |
+| `data/processed/sample.parquet` | `src/05_match.py` (+ `06`, `07` add columns) | Matched treated + controls | 49,689 rows | 2018 to 2025 | Done |
+| `data/processed/car.parquet`, `ar_paths.parquet` | `src/06_car.py` | CRSP returns + VW market | 59,775 | 2018 to 2025 | Done |
+| `data/processed/controls.parquet` | `src/07_controls.py` | CRSP daily, `comp.funda`, I/B/E/S, EDGAR | 59,775 | 2018 to 2025 | Done |
 | Fama-French factors | _to do_ | WRDS `ff.factors_daily` | | to 2026-09 | Planned |
 
 ---
@@ -333,6 +337,36 @@ identifies the matching CIZ series by comparing it with legacy `vwretd`.
     `car2_60` is missing for announcements after about early October 2025,
     because 60 trading days had not passed by the end of the CRSP data. We
     leave it missing rather than mixing short and full windows.
+
+---
+
+## `data/processed/controls.parquet`: control variables
+
+One row per SUE announcement. The same columns are merged into
+`sample.parquet`.
+
+**Rebuild:** `python src/07_controls.py --user <wrds_username>` (WRDS only on
+the first run, for `comp.funda`).
+
+| Column | Definition | Source |
+|---|---|---|
+| `logsize` | log(market cap in $M) at the end of the month before the reaction day | CRSP daily file |
+| `mcap_prior` | That market cap, in $M | CRSP daily file |
+| `bm` | Book equity (`ceq`) of the latest fiscal year ending at least 4 months before the reaction day, divided by `mcap_prior`. Missing if `ceq` ≤ 0. Winsorized 1/99 | `comp.funda` |
+| `log_analysts` | log(1 + `numest`), from the consensus used for SUE | I/B/E/S |
+| `pastret` | Compounded return over months −12 to −2 (needs at least 8 of 11 months). Winsorized 1/99 | CRSP daily file |
+| `samedaycount` | Number of *other* 8-K Item 2.02 announcements with the same reaction day (all EDGAR filers) | `announcements.parquet` |
+| `log_samedaycount` | log(1 + `samedaycount`) | |
+| `ff12`, `quarter` | Already in the sample (industry and calendar quarter) | `05_match.py`, `04_sue.py` |
+
+!!! note "Why not `crsp.msf` and `crsp.msenames`?"
+    Both are legacy CRSP tables that stop at 2024-12-31. Month-end market cap
+    and monthly returns are built from the daily CIZ file instead: the month's
+    last price × shares outstanding, and compounded daily returns. Industry
+    uses the CIZ historical SIC code (see `sample.parquet`).
+
+The 4-month lag on book equity avoids using a 10-K that was not yet public
+on the reaction day.
 
 ---
 

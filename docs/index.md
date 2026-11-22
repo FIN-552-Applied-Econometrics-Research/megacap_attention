@@ -35,8 +35,10 @@ release to find these firms and test whether their news is priced more slowly
 | 1 | Reaction days and mega-cap days | :white_check_mark: Done. 139 mega-cap days, 18,016 treated releases |
 | 2 | CIK → GVKEY → PERMNO → I/B/E/S links | :white_check_mark: Done. 95.6% of US common stocks, 82,735 in sample |
 | 2 | Earnings surprise (SUE) | :white_check_mark: Done. 59,775 announcements, 28% misses |
-| 2 | Abnormal returns, Compustat controls | :hourglass: Next |
-| 3 | Main regressions and portfolio tests | Planned |
+| 2 | Treated / control matching | :white_check_mark: Done. 12,568 treated on 139 events |
+| 2 | Abnormal returns (CAR) | :white_check_mark: Done. WRDS spot check passed |
+| 2 | Control variables | :white_check_mark: Done. bm 6.4% missing (negative book equity) |
+| 3 | Main regressions and portfolio tests | :hourglass: Next |
 
 ## Quick start
 

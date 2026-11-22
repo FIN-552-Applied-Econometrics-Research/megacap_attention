@@ -6,8 +6,8 @@ as experiments are completed.
 
 | ID | Experiment | Status |
 |---|---|---|
-| E0 | [Data pipeline](#e0-data-pipeline) | :hourglass: In progress |
-| E1 | [Immediate reaction](#e1-immediate-reaction) | Planned |
+| E0 | [Data pipeline](#e0-data-pipeline) | :white_check_mark: Done (follow-ups listed) |
+| E1 | [Immediate reaction](#e1-immediate-reaction) | :hourglass: Next |
 | E2 | [Post-announcement drift](#e2-post-announcement-drift) | Planned |
 | E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | Planned |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | Planned |
@@ -24,15 +24,18 @@ merged with returns, surprises and controls.
 
 | Step | Script | Output | Status |
 |---|---|---|---|
-| WRDS access and latest dates | `src/00_check_wrds_access.py` | `output/wrds_access_check.md` | :white_check_mark: |
-| EDGAR 8-K Item 2.02 times | `src/01_edgar.py` | `data/raw/edgar_202.parquet` | :white_check_mark: |
-| Add delisted firms (Compustat CIKs) | _to do_ | | |
+| WRDS access and latest dates | `src/00_check_wrds_access.py` | `output/wrds_access_check.md` | :white_check_mark: Sample ends 2025-12-31 |
+| EDGAR 8-K Item 2.02 times | `src/01_edgar.py` | `data/raw/edgar_202.parquet` | :white_check_mark: 105,088 filings |
+| Reaction day and `MegaDay` flag | `src/02_reaction_day.py` | `data/processed/announcements.parquet`, `megacap_days.csv` | :white_check_mark: 139 mega-cap days |
 | CIK → GVKEY → PERMNO → I/B/E/S link | `src/03_links.py` | `data/processed/links.parquet`, `output/match_rate.md` | :white_check_mark: 95.6% matched |
 | CRSP daily file (`dsf_v2`) | `src/04_sue.py` | `data/raw/crsp_daily.parquet` | :white_check_mark: 5.5M rows |
 | SUE (I/B/E/S actuals, consensus, CRSP price) | `src/04_sue.py` | `data/processed/sue.parquet`, `output/figures/sue_hist.png` | :white_check_mark: 59,775 |
-| Reaction day and `MegaDay` flag | `src/02_reaction_day.py` | `data/processed/announcements.parquet`, `megacap_days.csv` | :white_check_mark: |
-| Abnormal returns (CAR) | `src/06_car.py`, `notebooks/06_car_checks.ipynb` | `data/processed/car.parquet`, CAR columns in `sample.parquet` | :hourglass: Script ready, needs WRDS run |
-| Treated / control matching | `src/05_match.py` | `data/processed/sample.parquet`, `output/match_summary.md` | :hourglass: Script ready, needs WRDS run for SIC |
+| Treated / control matching | `src/05_match.py` | `data/processed/sample.parquet`, `output/match_summary.md` | :white_check_mark: 12,568 treated, 139 events |
+| Abnormal returns (CAR) | `src/06_car.py`, `notebooks/06_car_checks.ipynb` | `data/processed/car.parquet`, CAR columns in `sample.parquet` | :white_check_mark: WRDS spot check passed |
+| Control variables | `src/07_controls.py` | `data/processed/controls.parquet`, columns in `sample.parquet` | :white_check_mark: All < 5% missing except bm (6.4%) |
+| Add delisted firms (Compustat CIKs) | _optional_ | | Not started |
+| Earliest release time (EDGAR vs I/B/E/S `anntims`) | _follow-up_ | | Not started |
+| Negative book equity dummy (`neg_be`) | `src/07_controls.py` | | Not started |
 
 ## E1: Immediate reaction
 
