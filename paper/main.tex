@@ -1,0 +1,134 @@
+% =====================================================================
+%  FIN 552 Research Proposal (Prof. Mathias Kronlund)
+%  Lost in Nvidia's Shadow: Investor Attention and Mega-Cap Earnings Days
+%  Compile with pdfLaTeX + BibTeX (Overleaf default).
+% =====================================================================
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[authoryear, round]{natbib}
+\usepackage[colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black, urlcolor=blue!50!black]{hyperref}
+
+\usepackage{enumitem}
+\setlist{itemsep=2pt, topsep=2pt}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+
+\newcommand{\CAR}{\mathit{CAR}}
+\newcommand{\SUE}{\mathit{SUE}}
+\newcommand{\Treat}{\mathit{MegaDay}}
+
+\title{Lost in Nvidia's Shadow: Investor Attention and Mega-Cap Earnings Days\\[4pt]
+  \large FIN 552 Research Proposal}
+\author{Devminda Abeynayake \and Arnav Aggarwal\\[2pt]
+  \small University of Illinois Urbana-Champaign}
+\date{\today}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+\section*{1. Research Question}
+
+\textbf{Does a mega-cap's earnings announcement weaken or strengthen the market's reaction to other firms' earnings released the same day, and does the missing part of that reaction predict later returns?}
+
+On Wednesday 26 August 2026, Nvidia released its results at 16:20 ET, after the close. Thirty US companies reported earnings that day. Among the major firms on Bloomberg's calendar, 15 had their results priced on Thursday morning together with Nvidia's. One of them, Veeva, released fifteen minutes before Nvidia and beat its consensus estimate by 5.9\%. When one firm's news moves the whole index, every firm priced alongside it competes for the same limited attention. We build a signal that flags these firms from the exact release times in SEC filings and ask whether their earnings news is priced more slowly. The opposite is also possible, since a mega-cap report may pull investors into the market and speed up the pricing of everyone's news.
+
+\section*{2. Predictions and Why They Matter}
+
+Two hypotheses compete.
+\begin{itemize}
+  \item \textbf{H1, crowding out.} The mega-cap draws attention away from other firms. Their immediate reaction to an earnings surprise is weaker and the rest arrives later as drift, so a portfolio that buys treated firms with good news and sells those with bad news earns a positive abnormal return over the next 60 trading days. This predicts $\beta_3 < 0$ in equation (\ref{eq:main}).
+  \item \textbf{H2, crowding in.} The mega-cap brings investors to their screens as macro news does. The immediate reaction is stronger and the same portfolio earns less than on ordinary days. This predicts $\beta_3 > 0$.
+\end{itemize}
+Crowding out should be strongest for small firms with few analysts and on days when the mega-cap does not move the market.
+
+The question matters because market value is now highly concentrated in a few AI-linked firms that set the tone on their reporting days. If their reports leave other firms' news under-priced, investors who trade those stocks in the following weeks bear the cost, and firms learn something about when to schedule their own announcements. A finding of no effect is also useful. It would suggest that machine reading of disclosures now absorbs the distraction that earlier studies found.
+
+\section*{3. Related Literature}
+
+\citet{hirshleifer2009driven} sort US announcement days from 1995 to 2004 by the number of other firms announcing. On the busiest days the two-day reaction to earnings news is weaker and the 60-day drift is stronger. They also find, to their surprise, that announcements by large firms distract less than those by small firms. \citet{dellavigna2009investor} find the same pattern for Friday announcements. Both papers measure attention through the calendar, not through any one dominant firm.
+
+The closest study is \citet{frederickson2016competing}. They show that investors process same-day announcements in order of firm visibility, so a firm reporting next to more visible firms gets a weaker reaction and more drift. Their visibility measure is relative among all same-day reporters and their sample ends before today's concentration. We isolate one extreme case, a firm large enough to move the index, and allow its effect to go either way.
+
+That second direction comes from \citet{hirshleifer2022macro}. On days with FOMC decisions or jobs reports, the reaction to firm earnings is about 17\% stronger and drift about 71\% weaker. They attribute this to both attention and information and cannot fully separate the two. A mega-cap report is firm news that moves the market like macro news, which is why its sign is an open question. \citet{cohen2008economic} add a warning. News travels slowly across linked firms, so a mega-cap's results may carry real information for its customers and suppliers, and that must be kept apart from distraction. We contribute a single dated attention shock that the reporting firm does not control, and we test whether the drift it creates survives a benchmark and trading costs.
+
+\section*{4. Methodology}
+
+\textbf{The signal.} For each earnings release we find its reaction day, the first trading day the market can respond. A release before the 9:30 open is priced that day and a release after the 16:00 close is priced the next trading day. A firm quarter is treated ($\Treat_i = 1$) when its reaction day matches that of Nvidia, Apple, Microsoft, Alphabet, Amazon or Meta. Controls are firms reporting two to five trading days away, matched on size, industry and surprise. We skip the adjacent days because attention may still be diverted.
+
+\textbf{Main regression.} For each firm $i$,
+\begin{equation}
+  \CAR_{i}(0,+1) = \alpha + \beta_1 \SUE_i + \beta_2 \Treat_i + \beta_3 \left(\SUE_i \times \Treat_i\right) + \gamma' X_i + \varepsilon_i .
+  \label{eq:main}
+\end{equation}
+$\CAR_i(0,+1)$ is the two-day abnormal return against a market model \citep{mackinlay1997event}. $\SUE_i$ is actual EPS minus the I/B/E/S consensus, divided by price. $X_i$ holds size, book-to-market, analyst coverage, past returns, industry and quarter fixed effects, and the number of other announcements that day with its interaction with $\SUE_i$. That last control matters because mega-cap days fall in busy weeks, and without it we would only repeat \citet{hirshleifer2009driven}. H1 predicts $\beta_3 < 0$ and H2 predicts $\beta_3 > 0$. Standard errors are clustered by reaction date \citep{petersen2009estimating}.
+
+\textbf{Return prediction.} We repeat (\ref{eq:main}) with $\CAR_i(+2,+60)$ as the outcome. We also form a calendar time portfolio that is long treated firms in the top surprise quintile and short those in the bottom quintile for 60 days, and estimate $R^{LS}_t = a + b\,\mathit{MKT}_t + e_t$, then add the Fama and French five factors and momentum. H1 predicts a positive $a$ that is larger than for the same portfolio built from controls.
+
+\textbf{Identification and placebo.} A firm could pick a mega-cap day to hide bad news, so we check that surprises look the same in both groups and rerun the tests on firms that keep their usual reporting schedule. We also replace $\Treat_i$ with a dummy for each day from three days before to three days after the mega-cap's reaction day. The effect should peak on day zero and fade. An effect before the mega-cap reports would point to something other than attention.
+
+\textbf{What would make this not a discovery.} The signal could re-label the busy day effect, which we control for, the size effect, which matching addresses, or the earnings announcement premium of \citet{savor2016earnings}, which affects both groups. The bigger risk is information. Since 2023, AI news has repriced firms far outside technology, so a firm that looks unrelated to Nvidia may move on Nvidia's results through hidden exposure to AI demand. Dropping linked industries and controlling for past co-movement with the mega-cap reduces this but cannot remove it, so we report it as our main limitation.
+
+\textbf{Trading costs.} The strategy trades once per firm quarter and holds for 60 days, so turnover is low. But there are only about 24 mega-cap days a year, and if the effect sits in small, thinly traded firms, spreads could absorb it. Following \citet{novymarx2016taxonomy}, we will report the break-even cost at which the alpha disappears.
+
+\section*{5. Data}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+Variable & Construction & Source \\
+\midrule
+$\Treat_i$ & Reaction day from the acceptance time of each 8-K Item 2.02 filing, checked against Compustat and I/B/E/S dates & SEC EDGAR (free), WRDS \\
+$\CAR$ & Daily return minus market-model benchmark & CRSP \\
+$\SUE$ & (Actual EPS minus consensus) divided by price & I/B/E/S \\
+Controls & Size, book-to-market, analysts, past returns, same-day announcement count & Compustat, CRSP, I/B/E/S \\
+Attention check & Abnormal search volume and pageviews & Google Trends, Wikipedia (free) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The sample covers US common stocks priced above \$5 from 2018 to 2026, giving about 200 mega-cap reaction days. The hard part is the signal. Database announcement dates are often a day off and release times are not a standard field. EDGAR acceptance times are precise but can lag the press release, so we compare them with Compustat and I/B/E/S and keep the earliest credible time. The main access risk is WRDS coverage for 2026.
+
+\section*{6. Early Data Analysis}
+
+As a first test we applied the reaction day rule to Nvidia's report of 26 August 2026 using Bloomberg's calendar of major US firms.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}l r r r@{}}
+\toprule
+Group & Firms & Median surprise (\%) & Mean surprise (\%) \\
+\midrule
+Wed before open (not treated) & 4 & 30.6 & 56.9 \\
+Wed after close and Thu before open (treated) & 15 & 15.5 & 30.3 \\
+Thu after close (day $+1$, skipped) & 9 & 7.4 & 180.3 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Source: Bloomberg EVTS, US top securities, 26 and 27 August 2026. One treated firm has no estimate.}
+\end{table}
+
+Three things stood out. The rule matters, because four firms reported on Nvidia's calendar date but before the open and a date match would have misclassified them. Every firm with an estimate beat it, so we need the full EDGAR sample to get enough negative surprises for the portfolio test. Percentage surprises are badly skewed, with one firm beating by 1,180\% on a near-zero estimate, which is why we scale by price and will winsorize. Yahoo Finance lists 30 reports on 26 August against 15 on Bloomberg's list, so the full sample should roughly double the treated firms per event. The step we trust least is the release time, and we will check a sample of EDGAR times against newswire timestamps.
+
+We used an AI assistant to help draft this proposal. Its first count for this example, taken from news calendars, was 41 firms reporting and 17 treated. Checking against Bloomberg and Yahoo gave 30 and 15, so we now take every number from a primary source.
+
+\section*{7. Hypothetical Abstract}
+
+When a mega-cap reports earnings, every firm priced on the same day competes with it for attention. Using exact release times of US earnings announcements from 2018 to 2026, we identify firms first priced on the same day as one of six mega-caps. Their immediate response to earnings surprises is weaker than that of matched firms reporting a few days apart, and the missing response arrives as drift over the next 60 trading days. The effect is concentrated in small, lightly covered firms and on days when the mega-cap does not move the market. A long and short strategy on this drift earns a positive market-adjusted alpha before costs.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

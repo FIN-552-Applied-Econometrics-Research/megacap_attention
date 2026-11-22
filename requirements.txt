@@ -1,0 +1,9 @@
+pandas
+numpy
+statsmodels
+linearmodels
+wrds
+requests
+pandas_market_calendars
+pyarrow
+matplotlib
