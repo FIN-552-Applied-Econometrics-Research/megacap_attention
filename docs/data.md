@@ -265,6 +265,46 @@ Downloaded once by `04_sue.py` and reused by the abnormal-return step.
 
 ---
 
+## `data/processed/sample.parquet`: matched treated and control firms
+
+The regression sample. Each treated announcement and its controls share a
+`match_id` (the treated announcement's accession number).
+
+**Rebuild:** `python src/05_match.py --user <wrds_username>` (WRDS only on the
+first run, to download SIC codes into `data/raw/wrds_sic.parquet`).
+
+| Rule | Definition |
+|---|---|
+| Treated | `megaday = 1`: reaction day is a mega-cap reaction day, mega-caps excluded |
+| Control candidates | `days_from_mega` between ±2 and ±5. Distance is to the *nearest* mega day of all six firms, so anything within ±1 of any mega day is never a control |
+| Level 1 match | Same mega-cap event and same Fama-French 12 industry |
+| Level 2 fallback | Same calendar quarter and same FF12 industry, if level 1 has no candidate |
+| Distance | \(|\Delta 	ext{pct rank of market cap}| + |\Delta 	ext{pct rank of SUE}|\), percentile ranks within the calendar quarter |
+| Replacement | With replacement: one control can serve several treated firms (it appears once per use) |
+| k | Up to 3 controls stored. **Main spec: `match_rank == 1`. Robustness: `match_rank <= 3`** |
+
+Industry is the FF12 group of the CRSP historical SIC code at the reaction day
+(Compustat's current SIC if CRSP has none). Market cap is price × shares
+outstanding on the day before the reaction day, in $M.
+
+| Column | Meaning |
+|---|---|
+| `match_id` | Treated announcement's accession. Groups a treated firm with its controls |
+| `role`, `megaday` | `treated` / 1 or `control` / 0 |
+| `match_rank` | 0 for treated, 1 to 3 for controls (1 = closest) |
+| `match_level` | 1 = same event, 2 = same-quarter fallback |
+| `event_id` | Mega-cap event of the treated firm, e.g. `2025-08-28_NVDA`. Controls carry their treated firm's event; `control_event_id` is their own nearest event |
+| `distance` | Summed rank distance to the treated firm |
+| `ff12`, `ff12_name`, `sic`, `mcap`, `sue`, `numest`, ... | Matching variables and controls |
+
+```python
+s = pd.read_parquet("data/processed/sample.parquet")
+main = s[s["match_rank"] <= 1]          # treated + closest control
+robust = s                              # treated + up to 3 controls
+```
+
+---
+
 ## WRDS datasets
 
 _To be filled in as each card's script is written._ Access check results
