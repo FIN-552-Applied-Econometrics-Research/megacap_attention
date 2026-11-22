@@ -43,7 +43,7 @@ def main():
         print(f"  [{'OK' if exists else 'MISSING':7}] {f}/")
 
     if ok:
-        print("\nAll good. Next: python src/01_check_wrds_access.py --user <wrds_username>")
+        print("\nAll good. Next: python src/00_check_wrds_access.py --user <wrds_username>")
         return 0
     print("\nSomething is missing. Run: pip install -r requirements.txt")
     return 1

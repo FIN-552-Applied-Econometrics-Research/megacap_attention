@@ -5,6 +5,13 @@
 Do mega-cap earnings announcements take investor attention away from smaller firms
 that announce on the same day?
 
+[![Docs](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/actions/workflows/docs.yml/badge.svg)](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/actions/workflows/docs.yml)
+
+### 📄 [Read the project site →](https://fin-552-applied-econometrics-research.github.io/megacap_attention/)
+
+Introduction, methodology, experiments, results and the data guide. The site
+rebuilds automatically whenever something in `docs/` is pushed to `main`.
+
 ## Repo layout
 
 ```
@@ -14,6 +21,7 @@ data/raw/         raw WRDS pulls          (git-ignored, never pushed)
 data/processed/   cleaned / merged data   (git-ignored, never pushed)
 output/tables/    regression tables
 output/figures/   charts
+docs/             data guide and other documentation
 paper/            LaTeX for the proposal / paper (main.tex, references.bib)
 slides/           presentation files
 ```
@@ -41,12 +49,24 @@ Run every script from the repo root with the `.venv` active.
 
 | Step | Command | What it does | Needs WRDS |
 |---|---|---|---|
-| 0 | `python src/00_hello_world.py` | Checks that every package imports and every folder exists | No |
-| 1 | `python src/01_check_wrds_access.py --user <wrds_username>` | Confirms access to CRSP, Compustat, I/B/E/S and Fama-French, and prints the latest date in each. Saves `output/wrds_access_check.md` | Yes |
+| 0a | `python src/00_hello_world.py` | Checks that every package imports and every folder exists | No |
+| 0b | `python src/00_check_wrds_access.py --user <wrds_username>` | Confirms access to CRSP, Compustat, I/B/E/S and Fama-French, and prints the latest date in each. Saves `output/wrds_access_check.md` | Yes |
+| 1 | `python src/01_edgar.py` | Downloads the exact SEC acceptance time of every 8-K Item 2.02 (earnings) filing, 2018–2025. Saves `data/raw/edgar_202.parquet`. About 20–40 min, and it resumes if interrupted. Test first with `--limit 50` or `--check-only` | No (needs `.env`) |
 
 More steps will be added here as they are built.
 
-### WRDS login (step 1)
+**What each dataset contains and how to use it: see [docs/data.md](docs/data.md).**
+
+### SEC contact details (step 1)
+
+The SEC requires a name and email in every request. Copy `.env.example` to `.env`
+(git ignores it) and fill in your own:
+
+```
+SEC_USER_AGENT="Firstname Lastname yourname@illinois.edu"
+```
+
+### WRDS login (step 0b)
 
 On the first run, enter your WRDS password and approve the Duo push. When asked
 to create a pgpass file, answer `y`. The password is saved **outside** the repo
@@ -58,3 +78,16 @@ to create a pgpass file, answer `y`. The password is saved **outside** the repo
 - For anything bigger than a quick fix, work on a branch (`git checkout -b <name>/<topic>`)
   and open a pull request.
 - Don't both edit the same script at the same time. Say who owns which card.
+
+## Editing the project site
+
+The site is built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/)
+from the Markdown files in `docs/`. The page order is set in `mkdocs.yml`.
+
+```powershell
+pip install -r requirements-docs.txt
+mkdocs serve          # preview at http://127.0.0.1:8000, reloads as you edit
+```
+
+Push to `main` and GitHub Actions (`.github/workflows/docs.yml`) publishes it.
+Math works with `\( ... \)` inline and `\[ ... \]` for display equations.

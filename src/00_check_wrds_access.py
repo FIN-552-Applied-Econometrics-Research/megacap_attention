@@ -7,8 +7,8 @@ The result is printed as a Markdown table and saved to
 output/wrds_access_check.md, ready to paste into the GitHub issue.
 
 Usage:
-    python src/01_check_wrds_access.py                 # prompts for username
-    python src/01_check_wrds_access.py --user jdoe     # uses saved pgpass
+    python src/00_check_wrds_access.py                 # prompts for username
+    python src/00_check_wrds_access.py --user jdoe     # uses saved pgpass
 
 First run: the wrds package asks for your password and offers to save it
 (answer "y"). It is stored outside the repo:
