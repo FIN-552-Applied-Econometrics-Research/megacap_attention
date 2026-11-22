@@ -305,6 +305,37 @@ robust = s                              # treated + up to 3 controls
 
 ---
 
+## `data/processed/car.parquet`: abnormal returns
+
+One row per SUE announcement. The same columns are merged into
+`sample.parquet`.
+
+**Rebuild:** `python src/06_car.py --user <wrds_username>` (WRDS only on the
+first run). Checks and charts: `notebooks/06_car_checks.ipynb`.
+
+Day 0 is the reaction day. \(m_t\) is the CRSP value-weighted market return
+(`vwretd`). From 2025 on it comes from the CIZ index file, and the script
+identifies the matching CIZ series by comparing it with legacy `vwretd`.
+
+| Column | Definition |
+|---|---|
+| `alpha`, `beta`, `sigma`, `n_est` | Market model \(r_t = a + b\,m_t + e_t\) over days −250 to −30. Needs at least 100 valid days, otherwise missing |
+| `car01` | \(AR_0 + AR_1\), with \(AR_t = r_t - (a + b\,m_t)\) |
+| `car2_60` | \(\sum_{t=2}^{60} AR_t\) |
+| `car01_mkt`, `car2_60_mkt` | Same with market-adjusted \(AR_t = r_t - m_t\) |
+| `post_complete` | 1 if days +2 to +60 all fall before CRSP's end (2025-12-31). **`car2_60` is missing when 0** |
+| `n_post` | Valid return days in +2..+60 (fewer than 59 if the stock delisted) |
+
+`ar_paths.parquet` holds the daily market-model AR for days −5 to +60
+(`ar_-5` … `ar_60`) for charts.
+
+!!! note "Coverage"
+    `car2_60` is missing for announcements after about early October 2025,
+    because 60 trading days had not passed by the end of the CRSP data. We
+    leave it missing rather than mixing short and full windows.
+
+---
+
 ## WRDS datasets
 
 _To be filled in as each card's script is written._ Access check results

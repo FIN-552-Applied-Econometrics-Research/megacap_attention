@@ -7,3 +7,5 @@ requests
 pandas_market_calendars
 pyarrow
 matplotlib
+ipykernel
+nbclient
