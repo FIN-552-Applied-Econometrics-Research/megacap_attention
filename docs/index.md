@@ -23,6 +23,7 @@ release to find these firms and test whether their news is priced more slowly
 | [Experiments](experiments.md) | Each test we run, its spec and status |
 | [Results](results.md) | What we have found so far |
 | [Data guide](data.md) | Every dataset, its columns and how to use it |
+| [Notebooks](notebooks.md) | What each notebook checks and how to run it |
 
 ## Project status
 

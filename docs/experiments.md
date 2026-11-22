@@ -31,6 +31,7 @@ merged with returns, surprises and controls.
 | CRSP daily file (`dsf_v2`) | `src/04_sue.py` | `data/raw/crsp_daily.parquet` | :white_check_mark: 5.5M rows |
 | SUE (I/B/E/S actuals, consensus, CRSP price) | `src/04_sue.py` | `data/processed/sue.parquet`, `output/figures/sue_hist.png` | :white_check_mark: 59,775 |
 | Reaction day and `MegaDay` flag | `src/02_reaction_day.py` | `data/processed/announcements.parquet`, `megacap_days.csv` | :white_check_mark: |
+| Abnormal returns (CAR) | `src/06_car.py`, `notebooks/06_car_checks.ipynb` | `data/processed/car.parquet`, CAR columns in `sample.parquet` | :hourglass: Script ready, needs WRDS run |
 | Treated / control matching | `src/05_match.py` | `data/processed/sample.parquet`, `output/match_summary.md` | :hourglass: Script ready, needs WRDS run for SIC |
 
 ## E1: Immediate reaction

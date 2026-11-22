@@ -56,6 +56,8 @@ Run every script from the repo root with the `.venv` active.
 | 3 | `python src/03_links.py --user <wrds_username>` | Links every announcement CIK → GVKEY → PERMNO → I/B/E/S ticker and flags US common stocks. Saves `data/processed/links.parquet` and `output/match_rate.md`. WRDS tables are cached in `data/raw/wrds_*.parquet` (`--refresh` to re-pull) | Yes |
 | 4 | `python src/04_sue.py --user <wrds_username>` | Earnings surprise: SUE = (actual EPS − median consensus) / price before the reaction day. Also downloads the CRSP daily file (`data/raw/crsp_daily.parquet`, reused later). Saves `data/processed/sue.parquet`, `output/figures/sue_hist.png`, `output/sue_summary.md`. First run takes several minutes | Yes |
 | 5 | `python src/05_match.py --user <wrds_username>` | Matches each treated (mega-day) announcement to up to 3 controls reporting 2–5 trading days from the same mega-cap day, in the same FF12 industry, closest in market cap and SUE. Saves `data/processed/sample.parquet` and `output/match_summary.md`. WRDS is only needed once, for SIC codes | First run only |
+| 6 | `python src/06_car.py --user <wrds_username>` | Abnormal returns: market model (days −250 to −30) and market-adjusted, CAR(0,+1) and CAR(+2,+60). Adds CAR columns to `sample.parquet`; also saves `car.parquet`, `ar_paths.parquet`, `output/car_summary.md` and the WRDS spot-check files | First run only |
+| 6b | Open `notebooks/06_car_checks.ipynb` and run all ([what it does](https://fin-552-applied-econometrics-research.github.io/megacap_attention/notebooks/)) | Coverage, WRDS Event Study spot check, CAR-path chart (treated vs control) and drift by SUE quintile | No |
 
 More steps will be added here as they are built.
 
