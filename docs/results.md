@@ -125,6 +125,46 @@ firms not listed on NYSE, AMEX or Nasdaq. They are excluded by design.
 | 2024 | 12,401 | 11,773 | 94.9% |
 | 2025 | 12,787 | 12,134 | 94.9% |
 
+## Earnings surprise (SUE)
+
+From `src/04_sue.py` (`output/sue_summary.md`):
+
+| Step | Announcements | % of linked sample |
+|---|---|---|
+| Linked US common stocks | 82,735 | 100.0% |
+| Matched to an I/B/E/S actual (within 3 days) | 70,992 | 85.8% |
+| With a consensus before the release | 70,434 | 85.1% |
+| Price ≥ $5 | **59,775** | 72.2% |
+
+![SUE distribution](assets/sue_hist.png)
+
+| Year | N | Miss | Meet | Beat | % miss | Median SUE (% of price) | Median analysts |
+|---|---|---|---|---|---|---|---|
+| 2018 | 6,158 | 1,637 | 410 | 4,111 | 26.6% | 0.060 | 7 |
+| 2019 | 6,453 | 1,894 | 399 | 4,160 | 29.4% | 0.053 | 8 |
+| 2020 | 6,680 | 1,814 | 245 | 4,621 | 27.2% | 0.116 | 7 |
+| 2021 | 7,994 | 2,049 | 260 | 5,685 | 25.6% | 0.112 | 7 |
+| 2022 | 7,956 | 2,412 | 350 | 5,194 | 30.3% | 0.077 | 7 |
+| 2023 | 7,904 | 2,379 | 340 | 5,185 | 30.1% | 0.076 | 7 |
+| 2024 | 8,207 | 2,429 | 384 | 5,394 | 29.6% | 0.069 | 7 |
+| 2025 | 8,423 | 2,249 | 389 | 5,785 | 26.7% | 0.078 | 7 |
+
+- **Enough negative surprises:** 1,600 to 2,400 misses every year (26% to
+  30%), so the long-short portfolio has a short leg in every year.
+- The distribution is sharply peaked just above zero (firms narrowly beating
+  consensus) with fat tails, which is why SUE is winsorized.
+- **EDGAR vs I/B/E/S dates:** same day for 94.7%, I/B/E/S one day *earlier*
+  for 3.5%, one day later for 1.2%. The "one day earlier" cases are firms whose
+  press release came out before the 8-K was filed. See the follow-up below.
+- 17 observations needed a split adjustment between consensus and announcement.
+
+!!! todo "Follow-up: release time for the 3.5% where I/B/E/S is earlier"
+    For 2,084 announcements the I/B/E/S date is the day before the EDGAR
+    filing. Where the press release came out the previous morning, our
+    reaction day is one day late. I/B/E/S also has an announcement time
+    (`anntims`), so the fix is to take the earliest credible time of EDGAR and
+    I/B/E/S, as the proposal planned.
+
 ## Early analysis: Nvidia, 26 August 2026
 
 From the proposal, using Bloomberg's calendar of major US firms:
