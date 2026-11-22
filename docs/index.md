@@ -31,6 +31,7 @@ release to find these firms and test whether their news is priced more slowly
 | 1 | WRDS access check | :white_check_mark: Done. Sample ends 2025-12-31 (CRSP) |
 | 1 | Shared repo structure | :white_check_mark: Done |
 | 1 | EDGAR 8-K Item 2.02 release times | :white_check_mark: Done. 105,088 filings |
+| 1 | Reaction days and mega-cap days | :white_check_mark: Done. 139 mega-cap days, 18,016 treated releases |
 | 2 | CRSP / I/B/E/S / Compustat pulls and linking | :hourglass: Next |
 | 3 | Main regressions and portfolio tests | Planned |
 
