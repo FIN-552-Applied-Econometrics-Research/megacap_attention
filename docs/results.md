@@ -77,6 +77,54 @@ From `src/02_reaction_day.py`:
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Releases | 4,082 | 3,898 | 2,935 | 4,079 | 7,390 | **18,016** | 6,234 | 6,332 | 6,686 | 8,780 | 6,949 |
 
+### Validation: Nvidia, 26 August 2026
+
+`python src/02_reaction_day.py --check` applies the rule to every 8-K Item
+2.02 filed on 26 and 27 August 2026:
+
+- **Nvidia** (16:21 Wed) and **Veeva** (16:06 Wed) both get reaction day
+  **27 Aug**. Pass.
+- **29 filers** have reaction day 27 Aug (Wed after close or Thu before open),
+  against 15 major firms on Bloomberg's list. These include Salesforce,
+  CrowdStrike, Okta, Nutanix, HP, Synopsys, Agilent, Dollar Tree, Dollar
+  General, Best Buy and Burlington.
+- **13 filers** reported Wed morning and are **not treated** (Kohl's,
+  Smucker, Abercrombie & Fitch, Williams-Sonoma and others), even though they
+  share Nvidia's calendar date.
+- Some filers are funds or crypto-treasury shells (e.g. Fidelity Private
+  Credit Fund, Hyperliquid Strategies). The US common-stock filter in
+  `03_links.py` removes them.
+- Three intraday releases are flagged with `intraday = 1`.
+
+## Identifier links
+
+From `src/03_links.py` (`output/match_rate.md`), checked at each announcement date:
+
+| Step | Announcements | % of all |
+|---|---|---|
+| All EDGAR 8-K 2.02 announcements | 105,088 | 100.0% |
+| with GVKEY | 104,975 | 99.9% |
+| with PERMNO (CCM link in range) | 100,901 | 96.0% |
+| with I/B/E/S ticker | 95,859 | 91.2% |
+| US common stock | 86,568 | 82.4% |
+| **US common stock with all three IDs (sample)** | **82,735** | 78.7% |
+
+**Match rate among US common stocks: 95.6%** (target 90%). Every year is
+between 94.8% and 97.0%, and all 196 mega-cap filings link. The 17.6% of
+announcements that are not US common stock are mostly REITs, ADRs, funds and
+firms not listed on NYSE, AMEX or Nasdaq. They are excluded by design.
+
+| Year | US common | All three IDs | Rate |
+|---|---|---|---|
+| 2018 | 8,423 | 8,170 | 97.0% |
+| 2019 | 8,854 | 8,550 | 96.6% |
+| 2020 | 9,700 | 9,352 | 96.4% |
+| 2021 | 10,698 | 10,138 | 94.8% |
+| 2022 | 11,662 | 11,140 | 95.5% |
+| 2023 | 12,043 | 11,478 | 95.3% |
+| 2024 | 12,401 | 11,773 | 94.9% |
+| 2025 | 12,787 | 12,134 | 94.9% |
+
 ## Early analysis: Nvidia, 26 August 2026
 
 From the proposal, using Bloomberg's calendar of major US firms:

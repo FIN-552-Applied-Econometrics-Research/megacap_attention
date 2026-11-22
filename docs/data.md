@@ -17,7 +17,7 @@ so everyone's copy matches the code.
 | `data/processed/megacap_days.csv` | `src/02_reaction_day.py` | edgar_202 | 196 (192 scheduled) | 2018 to 2025 | Done |
 | CRSP daily returns | _to do_ | WRDS `crsp.dsf_v2` | | to 2025-12-31 | Planned |
 | I/B/E/S actuals and consensus | _to do_ | WRDS `ibes.actu_epsus`, `ibes.statsum_epsus` | | to 2026-08 | Planned |
-| Compustat / link tables | _to do_ | WRDS `comp.company`, `crsp.ccmxpf_lnkhist` | | | Planned |
+| `data/processed/links.parquet` | `src/03_links.py` | WRDS `comp.company`, `crsp.ccmxpf_lnkhist`, `wrdsapps` ibcrsphist, `crsp.stksecurityinfohist` | 105,088 (82,735 in sample) | 2018 to 2025 | Done |
 | Fama-French factors | _to do_ | WRDS `ff.factors_daily` | | to 2026-09 | Planned |
 
 ---
@@ -169,6 +169,49 @@ import pandas as pd
 ann = pd.read_parquet("data/processed/announcements.parquet")
 treated  = ann[ann["megaday"] == 1]
 controls = ann[(ann["is_mega"] == 0) & ann["days_from_mega"].abs().between(2, 5)]
+```
+
+---
+
+## `data/processed/links.parquet`: firm identifiers
+
+One row per announcement (`accession`) with its IDs in every database. All
+links are checked **at the announcement date** (`date_et`).
+
+**Rebuild:** `python src/03_links.py --user <wrds_username>`. WRDS tables are
+cached in `data/raw/wrds_*.parquet`, so later runs are offline. Use
+`--refresh` to pull them again.
+
+| Step | Source | Rule |
+|---|---|---|
+| CIK → GVKEY | `comp.company.cik` | Current CIK only. If a CIK maps to several GVKEYs, the one with a live CCM link wins |
+| GVKEY → PERMNO | `crsp.ccmxpf_lnkhist` | `linktype` in (LU, LC), `linkprim` in (P, C), `linkdt` ≤ date ≤ `linkenddt` (null = still active). Prefer P over C, then LC over LU |
+| PERMNO → I/B/E/S | `ibcrsphist` (wrdsapps) | `sdate` ≤ date ≤ `edate`, lowest `score` (1 = best) |
+| US common stock | `crsp.stksecurityinfohist` | CIZ equivalent of shrcd 10/11 and exchcd 1/2/3 (below) |
+
+!!! note "Why not `shrcd` / `exchcd`?"
+    Those fields only exist in the legacy CRSP format, which stops at
+    2024-12-31. The CIZ equivalent (WRDS's mapping) is: `sharetype = 'NS'`,
+    `securitytype = 'EQTY'`, `securitysubtype = 'COM'`, `usincflg = 'Y'`,
+    `issuertype` in (ACOR, CORP), `primaryexch` in (N, A, Q),
+    `conditionaltype = 'RW'`, `tradingstatusflg = 'A'`. This excludes REITs,
+    ADRs, funds and units, the same as shrcd 10/11.
+
+| Column | Meaning |
+|---|---|
+| `accession`, `cik`, `date_et` | From the announcement |
+| `gvkey`, `conm` | Compustat ID and company name |
+| `permno`, `permco`, `linktype`, `linkprim` | CRSP IDs and the CCM link used |
+| `ibes_ticker`, `ibes_score` | I/B/E/S ticker and match quality |
+| `us_common` | 1 if US common stock on NYSE / AMEX / Nasdaq at the date |
+| `all_ids` | 1 if GVKEY, PERMNO and I/B/E/S ticker are all present |
+| `in_sample` | **1 if `all_ids` and `us_common`.** Use this to filter the sample |
+
+```python
+links = pd.read_parquet("data/processed/links.parquet")
+ann = pd.read_parquet("data/processed/announcements.parquet")
+sample = ann.merge(links.drop(columns=["cik", "date_et"]), on="accession")
+sample = sample[sample["in_sample"] == 1]
 ```
 
 ---

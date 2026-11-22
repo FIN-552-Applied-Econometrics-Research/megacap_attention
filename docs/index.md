@@ -32,7 +32,8 @@ release to find these firms and test whether their news is priced more slowly
 | 1 | Shared repo structure | :white_check_mark: Done |
 | 1 | EDGAR 8-K Item 2.02 release times | :white_check_mark: Done. 105,088 filings |
 | 1 | Reaction days and mega-cap days | :white_check_mark: Done. 139 mega-cap days, 18,016 treated releases |
-| 2 | CRSP / I/B/E/S / Compustat pulls and linking | :hourglass: Next |
+| 2 | CIK → GVKEY → PERMNO → I/B/E/S links | :white_check_mark: Done. 95.6% of US common stocks, 82,735 in sample |
+| 2 | CRSP returns, I/B/E/S surprises, Compustat controls | :hourglass: Next |
 | 3 | Main regressions and portfolio tests | Planned |
 
 ## Quick start
