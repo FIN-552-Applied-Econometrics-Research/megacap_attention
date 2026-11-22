@@ -52,6 +52,7 @@ Run every script from the repo root with the `.venv` active.
 | 0a | `python src/00_hello_world.py` | Checks that every package imports and every folder exists | No |
 | 0b | `python src/00_check_wrds_access.py --user <wrds_username>` | Confirms access to CRSP, Compustat, I/B/E/S and Fama-French, and prints the latest date in each. Saves `output/wrds_access_check.md` | Yes |
 | 1 | `python src/01_edgar.py` | Downloads the exact SEC acceptance time of every 8-K Item 2.02 (earnings) filing, 2018–2025. Saves `data/raw/edgar_202.parquet`. About 20–40 min, and it resumes if interrupted. Test first with `--limit 50` or `--check-only` | No (needs `.env`) |
+| 2 | `python src/02_reaction_day.py` | Adds the reaction day (first trading day the market can react) to every release and lists the mega-cap reaction days. Saves `data/processed/announcements.parquet` and `megacap_days.csv`. `--check` runs the Nvidia 26 Aug 2026 check | No (`--check` needs `.env`) |
 
 More steps will be added here as they are built.
 

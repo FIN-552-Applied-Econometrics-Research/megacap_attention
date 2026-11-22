@@ -13,6 +13,8 @@ so everyone's copy matches the code.
 | File | Built by | Source | Rows | Coverage | Status |
 |---|---|---|---|---|---|
 | `data/raw/edgar_202.parquet` | `src/01_edgar.py` | SEC EDGAR submissions API | 105,088 | 2018-01-01 to 2025-12-31 | Done |
+| `data/processed/announcements.parquet` | `src/02_reaction_day.py` | edgar_202 + NYSE calendar | 105,088 | 2018 to 2025 | Done |
+| `data/processed/megacap_days.csv` | `src/02_reaction_day.py` | edgar_202 | 196 (192 scheduled) | 2018 to 2025 | Done |
 | CRSP daily returns | _to do_ | WRDS `crsp.dsf_v2` | | to 2025-12-31 | Planned |
 | I/B/E/S actuals and consensus | _to do_ | WRDS `ibes.actu_epsus`, `ibes.statsum_epsus` | | to 2026-08 | Planned |
 | Compustat / link tables | _to do_ | WRDS `comp.company`, `crsp.ccmxpf_lnkhist` | | | Planned |
@@ -111,6 +113,63 @@ edgar_2024 = edgar[t.dt.year == 2024]
 Acceptance hour (ET): peaks at 06:00 to 08:00 (before open, about 35k) and
 16:00 (after close, about 49k). Using the `timing` split above: 59,705
 after close, 38,178 before open, 7,205 during market hours.
+
+---
+
+## `data/processed/announcements.parquet`: reaction days
+
+Every row of `edgar_202.parquet` plus the first trading day the market can
+react, and its distance from the nearest mega-cap reaction day.
+
+**Rebuild:** `python src/02_reaction_day.py` (a few seconds, offline).
+
+### Reaction-day rule (NYSE calendar, ET)
+
+| Accepted | Reaction day | `intraday` |
+|---|---|---|
+| Before 09:30 on a trading day | Same day | 0 |
+| 09:30 to market close | Same day | 1 |
+| At or after market close | Next trading day | 0 |
+| Weekend or holiday | Next trading day | 0 |
+
+Market close is 16:00, or **13:00 on NYSE early-close days** (day after
+Thanksgiving, 3 July, Christmas Eve). A release at 13:30 on one of those days
+is after the close and rolls to the next trading day.
+
+### Added columns
+
+| Column | Meaning |
+|---|---|
+| `date_et` | Calendar date of acceptance (ET) |
+| `reaction_day` | First trading day the market can react |
+| `intraday` | 1 if released during market hours (6.8% of releases) |
+| `is_mega`, `mega_ticker` | 1 and the ticker if the filer is NVDA, AAPL, MSFT, GOOGL, AMZN or META |
+| `days_from_mega` | Signed trading days from the nearest mega-cap reaction day. Negative = before, 0 = same day, positive = after. Ties go to the earlier mega day |
+| `nearest_mega` | Ticker(s) of that mega day, e.g. `NVDA` or `AAPL,AMZN` when two share a day |
+| `days_from_nvda` | Same, using Nvidia days only |
+| `megaday` | **Treatment flag:** 1 if `days_from_mega == 0` and the firm is not itself a mega-cap |
+
+Controls (2 to 5 trading days away) are `days_from_mega.abs().between(2, 5)`.
+
+## `data/processed/megacap_days.csv`: mega-cap releases
+
+One row per mega-cap 8-K Item 2.02 filing: `ticker, cik, accession,
+acceptance_datetime, reaction_day, intraday, preliminary`.
+
+- 32 scheduled releases per company (8 years × 4 quarters), 139 distinct
+  reaction days (some days have two mega-caps, e.g. Apple and Amazon).
+- **`preliminary = 1`** marks four unscheduled 2.02 filings that came a few
+  weeks before the real release: NVDA 2019-01-28 and 2022-08-08 (revenue
+  warnings), AAPL 2019-01-02 (revenue warning letter), GOOGL 2023-04-20. They
+  are kept in the file but **excluded** from `days_from_mega` and `megaday`.
+  Rule: a filing followed by another within 35 days is preliminary.
+
+```python
+import pandas as pd
+ann = pd.read_parquet("data/processed/announcements.parquet")
+treated  = ann[ann["megaday"] == 1]
+controls = ann[(ann["is_mega"] == 0) & ann["days_from_mega"].abs().between(2, 5)]
+```
 
 ---
 

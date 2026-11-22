@@ -60,6 +60,23 @@ inside EDGAR's 06:00 to 22:00 ET operating hours.
 | 2025-11-19 | 16:20:44 |
 | 2026-08-26 | 16:21:19 (validation case) |
 
+## Reaction days and mega-cap days
+
+From `src/02_reaction_day.py`:
+
+- **139 distinct mega-cap reaction days** from 2018 to 2025 (6 firms × 32
+  scheduled releases = 192, with some days shared by two firms).
+- **18,016 treated releases** (other firms whose reaction day is a mega-cap
+  day), about 17% of all releases. Mega-cap days fall in peak earnings weeks,
+  which is why the same-day announcement count is a key control.
+- 7,191 releases (6.8%) are intraday.
+- Four mega-cap 2.02 filings are unscheduled revenue warnings or previews and
+  are excluded from treatment (see the [Data guide](data.md)).
+
+| Trading days from nearest mega day | −5 | −4 | −3 | −2 | −1 | **0** | +1 | +2 | +3 | +4 | +5 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Releases | 4,082 | 3,898 | 2,935 | 4,079 | 7,390 | **18,016** | 6,234 | 6,332 | 6,686 | 8,780 | 6,949 |
+
 ## Early analysis: Nvidia, 26 August 2026
 
 From the proposal, using Bloomberg's calendar of major US firms:

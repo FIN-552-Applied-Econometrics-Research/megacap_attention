@@ -30,7 +30,7 @@ merged with returns, surprises and controls.
 | CIK → PERMNO link | _to do_ | | |
 | CRSP daily returns (`dsf_v2`) | _to do_ | | |
 | I/B/E/S actuals and consensus | _to do_ | | |
-| Reaction day and `MegaDay` flag | _to do_ | | |
+| Reaction day and `MegaDay` flag | `src/02_reaction_day.py` | `data/processed/announcements.parquet`, `megacap_days.csv` | :white_check_mark: |
 
 ## E1: Immediate reaction
 
