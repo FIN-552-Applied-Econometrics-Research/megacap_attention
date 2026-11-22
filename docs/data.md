@@ -15,8 +15,8 @@ so everyone's copy matches the code.
 | `data/raw/edgar_202.parquet` | `src/01_edgar.py` | SEC EDGAR submissions API | 105,088 | 2018-01-01 to 2025-12-31 | Done |
 | `data/processed/announcements.parquet` | `src/02_reaction_day.py` | edgar_202 + NYSE calendar | 105,088 | 2018 to 2025 | Done |
 | `data/processed/megacap_days.csv` | `src/02_reaction_day.py` | edgar_202 | 196 (192 scheduled) | 2018 to 2025 | Done |
-| CRSP daily returns | _to do_ | WRDS `crsp.dsf_v2` | | to 2025-12-31 | Planned |
-| I/B/E/S actuals and consensus | _to do_ | WRDS `ibes.actu_epsus`, `ibes.statsum_epsus` | | to 2026-08 | Planned |
+| `data/raw/crsp_daily.parquet` | `src/04_sue.py` | WRDS `crsp.dsf_v2` (sample PERMNOs) | 5,527,421 | 2017-10 to 2025-12 | Done |
+| `data/processed/sue.parquet` | `src/04_sue.py` | WRDS `ibes.actu_epsus`, `ibes.statsumu_epsus`, `crsp.dsf_v2` | 59,775 | 2018 to 2025 | Done |
 | `data/processed/links.parquet` | `src/03_links.py` | WRDS `comp.company`, `crsp.ccmxpf_lnkhist`, `wrdsapps` ibcrsphist, `crsp.stksecurityinfohist` | 105,088 (82,735 in sample) | 2018 to 2025 | Done |
 | Fama-French factors | _to do_ | WRDS `ff.factors_daily` | | to 2026-09 | Planned |
 
@@ -213,6 +213,55 @@ ann = pd.read_parquet("data/processed/announcements.parquet")
 sample = ann.merge(links.drop(columns=["cik", "date_et"]), on="accession")
 sample = sample[sample["in_sample"] == 1]
 ```
+
+---
+
+## `data/processed/sue.parquet`: earnings surprise
+
+\[
+\SUE_i = \frac{\text{actual EPS}_i - \text{median consensus}_i}{P_{i,\,t-1}}
+\]
+
+where \(P_{i,t-1}\) is the CRSP price on the last trading day before the
+reaction day. One row per announcement that matches an I/B/E/S quarter.
+
+**Rebuild:** `python src/04_sue.py --user <wrds_username>`.
+
+| Input | Table | Rule |
+|---|---|---|
+| Actual EPS | `ibes.actu_epsus` (unadjusted) | `measure = 'EPS'`, `pdicity = 'QTR'`. Matched to the EDGAR release by I/B/E/S ticker, with `anndats` closest to the EDGAR date (within 3 days) |
+| Consensus | `ibes.statsumu_epsus` (unadjusted) | `fpi = 6` (current quarter), `fpedats` = the actual's `pends`, last `statpers` strictly before the EDGAR date, at most 95 days old. `medest` |
+| Price | `crsp.dsf_v2` | `abs(dlyprc)` on the last trading day before the reaction day |
+
+!!! warning "Split basis"
+    I/B/E/S *adjusted* files restate old values to today's share count, while
+    *unadjusted* files and CRSP prices keep the share count of their own date.
+    Mixing them creates fake surprises around stock splits. We use the
+    unadjusted actuals and consensus, then convert both to the price date's
+    share basis with CRSP's cumulative share factor:
+    \(x \times \text{cfac}(t_\text{price}) / \text{cfac}(t_x)\). Rows where
+    this changed anything have `split_adjusted = 1`.
+
+**Filters:** price ≥ $5. `sue` is winsorized at the 1st and 99th percentile
+within each calendar quarter of the reaction day; `sue_raw` is unwinsorized.
+
+| Column | Meaning |
+|---|---|
+| `accession`, `permno`, `ibes_ticker`, `reaction_day` | Keys |
+| `pends`, `anndats`, `day_gap` | I/B/E/S fiscal period, announcement date, and its gap in days from the EDGAR date |
+| `statpers` | Date of the consensus used |
+| `actual`, `medest`, `meanest` | EPS, on the price date's share basis |
+| `numest`, `stdev` | Number of analysts (for the heterogeneity card) and forecast dispersion |
+| `price`, `price_date` | CRSP price used as the scaler |
+| `surprise` | `actual − medest` |
+| `sue_raw`, `sue` | Unwinsorized and winsorized SUE (fraction of price, so 0.001 = 0.1%) |
+
+## `data/raw/crsp_daily.parquet`: CRSP daily file
+
+Daily `ret`, `retx`, `prc`, `vol`, `shrout`, `cfacshr`, `cfacpr` from
+`crsp.dsf_v2` for every sample PERMNO, October 2017 to December 2025.
+Downloaded once by `04_sue.py` and reused by the abnormal-return step.
+**Licensed WRDS data: never commit.**
 
 ---
 

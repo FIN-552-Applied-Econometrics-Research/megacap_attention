@@ -54,6 +54,7 @@ Run every script from the repo root with the `.venv` active.
 | 1 | `python src/01_edgar.py` | Downloads the exact SEC acceptance time of every 8-K Item 2.02 (earnings) filing, 2018–2025. Saves `data/raw/edgar_202.parquet`. About 20–40 min, and it resumes if interrupted. Test first with `--limit 50` or `--check-only` | No (needs `.env`) |
 | 2 | `python src/02_reaction_day.py` | Adds the reaction day (first trading day the market can react) to every release and lists the mega-cap reaction days. Saves `data/processed/announcements.parquet` and `megacap_days.csv`. `--check` runs the Nvidia 26 Aug 2026 check | No (`--check` needs `.env`) |
 | 3 | `python src/03_links.py --user <wrds_username>` | Links every announcement CIK → GVKEY → PERMNO → I/B/E/S ticker and flags US common stocks. Saves `data/processed/links.parquet` and `output/match_rate.md`. WRDS tables are cached in `data/raw/wrds_*.parquet` (`--refresh` to re-pull) | Yes |
+| 4 | `python src/04_sue.py --user <wrds_username>` | Earnings surprise: SUE = (actual EPS − median consensus) / price before the reaction day. Also downloads the CRSP daily file (`data/raw/crsp_daily.parquet`, reused later). Saves `data/processed/sue.parquet`, `output/figures/sue_hist.png`, `output/sue_summary.md`. First run takes several minutes | Yes |
 
 More steps will be added here as they are built.
 

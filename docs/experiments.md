@@ -28,8 +28,8 @@ merged with returns, surprises and controls.
 | EDGAR 8-K Item 2.02 times | `src/01_edgar.py` | `data/raw/edgar_202.parquet` | :white_check_mark: |
 | Add delisted firms (Compustat CIKs) | _to do_ | | |
 | CIK → GVKEY → PERMNO → I/B/E/S link | `src/03_links.py` | `data/processed/links.parquet`, `output/match_rate.md` | :white_check_mark: 95.6% matched |
-| CRSP daily returns (`dsf_v2`) | _to do_ | | |
-| I/B/E/S actuals and consensus | _to do_ | | |
+| CRSP daily file (`dsf_v2`) | `src/04_sue.py` | `data/raw/crsp_daily.parquet` | :white_check_mark: 5.5M rows |
+| SUE (I/B/E/S actuals, consensus, CRSP price) | `src/04_sue.py` | `data/processed/sue.parquet`, `output/figures/sue_hist.png` | :white_check_mark: 59,775 |
 | Reaction day and `MegaDay` flag | `src/02_reaction_day.py` | `data/processed/announcements.parquet`, `megacap_days.csv` | :white_check_mark: |
 
 ## E1: Immediate reaction
