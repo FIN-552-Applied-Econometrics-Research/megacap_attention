@@ -1,0 +1,58 @@
+# Lost in Nvidia's Shadow
+
+**Investor attention and mega-cap earnings days**
+FIN 552 Applied Econometrics, University of Illinois Urbana-Champaign
+
+!!! question "Research question"
+    Does a mega-cap's earnings announcement weaken or strengthen the market's
+    reaction to other firms' earnings released the same day? And does the
+    missing part of that reaction predict later returns?
+
+On Wednesday 26 August 2026, Nvidia released its results at 16:20 ET, after
+the close. Fifteen major US firms had their results priced on Thursday morning
+alongside Nvidia's. We use the exact SEC filing time of every US earnings
+release to find these firms and test whether their news is priced more slowly
+(crowding out) or faster (crowding in).
+
+## Where to read
+
+| Page | What it covers |
+|---|---|
+| [Introduction](introduction.md) | Motivation, hypotheses, related literature |
+| [Methodology](methodology.md) | The treatment signal, regressions, identification |
+| [Experiments](experiments.md) | Each test we run, its spec and status |
+| [Results](results.md) | What we have found so far |
+| [Data guide](data.md) | Every dataset, its columns and how to use it |
+
+## Project status
+
+| Phase | Task | Status |
+|---|---|---|
+| 1 | WRDS access check | :white_check_mark: Done. Sample ends 2025-12-31 (CRSP) |
+| 1 | Shared repo structure | :white_check_mark: Done |
+| 1 | EDGAR 8-K Item 2.02 release times | :white_check_mark: Done. 105,088 filings |
+| 2 | CRSP / I/B/E/S / Compustat pulls and linking | :hourglass: Next |
+| 3 | Main regressions and portfolio tests | Planned |
+
+## Quick start
+
+```bash
+git clone https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention.git
+cd megacap_attention
+python -m venv .venv
+.venv\Scripts\activate            # Mac/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+python src/00_hello_world.py
+```
+
+The full step-by-step run order is in the
+[README](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention#run-the-steps-in-order).
+
+## Team
+
+| Name | Role |
+|---|---|
+| Devminda Abeynayake | Student |
+| Arnav Aggarwal | Student |
+
+Course instructor: Prof. Mathias Kronlund.

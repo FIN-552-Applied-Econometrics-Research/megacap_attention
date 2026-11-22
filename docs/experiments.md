@@ -1,0 +1,79 @@
+# Experiments
+
+Each experiment lists its specification, the script that runs it, where the
+output goes, and its status. Update the status and add links to output tables
+as experiments are completed.
+
+| ID | Experiment | Status |
+|---|---|---|
+| E0 | [Data pipeline](#e0-data-pipeline) | :hourglass: In progress |
+| E1 | [Immediate reaction](#e1-immediate-reaction) | Planned |
+| E2 | [Post-announcement drift](#e2-post-announcement-drift) | Planned |
+| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | Planned |
+| E4 | [Event-time placebo](#e4-event-time-placebo) | Planned |
+| E5 | [Heterogeneity](#e5-heterogeneity) | Planned |
+| E6 | [Robustness](#e6-robustness) | Planned |
+| E7 | [Attention check](#e7-attention-check) | Planned |
+
+---
+
+## E0: Data pipeline
+
+Build the firm-quarter panel: release time → reaction day → treatment flag,
+merged with returns, surprises and controls.
+
+| Step | Script | Output | Status |
+|---|---|---|---|
+| WRDS access and latest dates | `src/00_check_wrds_access.py` | `output/wrds_access_check.md` | :white_check_mark: |
+| EDGAR 8-K Item 2.02 times | `src/01_edgar.py` | `data/raw/edgar_202.parquet` | :white_check_mark: |
+| Add delisted firms (Compustat CIKs) | _to do_ | | |
+| CIK → PERMNO link | _to do_ | | |
+| CRSP daily returns (`dsf_v2`) | _to do_ | | |
+| I/B/E/S actuals and consensus | _to do_ | | |
+| Reaction day and `MegaDay` flag | _to do_ | | |
+
+## E1: Immediate reaction
+
+- **Outcome:** \(\CAR_i(0,+1)\), market model
+- **Spec:** main regression on the [Methodology](methodology.md#main-regression) page
+- **Key coefficient:** \(\beta_3\) on \(\SUE \times \MegaDay\)
+- **SEs:** clustered by reaction date
+
+## E2: Post-announcement drift
+
+- **Outcome:** \(\CAR_i(+2,+60)\)
+- **Spec:** same as E1
+- **H1 predicts:** \(\beta_3 > 0\) for drift (the missing reaction arrives later)
+
+## E3: Calendar-time portfolio
+
+- Long top-quintile SUE treated firms, short bottom-quintile, 60-day hold
+- Alphas against CAPM, FF5 and FF5 + momentum
+- Same portfolio from matched controls, as a benchmark
+- Break-even trading cost (Novy-Marx and Velikov, 2016)
+
+## E4: Event-time placebo
+
+- Replace \(\MegaDay\) with dummies for days −3 … +3 around each mega-cap reaction day
+- **Expect:** effect peaks at day 0 and is zero before
+
+## E5: Heterogeneity
+
+Split E1 and E2 by:
+
+- firm size (terciles)
+- analyst coverage
+- whether the mega-cap itself moved the market that day (|market return| above or below median)
+
+## E6: Robustness
+
+- Drop industries linked to the mega-caps (AI and semiconductor supply chain)
+- Control for past return co-movement with the mega-cap
+- Only firms that keep their usual reporting schedule (strategic-timing check)
+- Compare EDGAR release times with Compustat `rdq` and I/B/E/S `anndats`
+
+## E7: Attention check
+
+Abnormal Google search volume and Wikipedia pageviews for treated versus
+control firms. If H1 holds, treated firms should get less attention on their
+announcement day.
