@@ -1,8 +1,9 @@
 # Results
 
 !!! info "Status"
-    The data pipeline is in progress. Regression results will be added here as
-    experiments E1 to E7 are completed. What follows is what we know so far.
+    The data pipeline (E0) is complete. Regression results will be added here
+    as experiments E1 to E7 are completed. The CAR comparisons below are
+    descriptive only.
 
 ## Data availability
 
@@ -164,6 +165,114 @@ From `src/04_sue.py` (`output/sue_summary.md`):
     reaction day is one day late. I/B/E/S also has an announcement time
     (`anntims`), so the fix is to take the earliest credible time of EDGAR and
     I/B/E/S, as the proposal planned.
+
+## Treated / control matching
+
+From `src/05_match.py` (`output/match_summary.md`):
+
+- **12,568 treated announcements** from 1,781 firms on **139 mega-cap
+  events** (32 per mega-cap; some days are shared).
+- **Controls (1:1, with replacement):** 8,310 announcements from 2,060 firms.
+  The 1:3 robustness match uses 16,112.
+- Every treated firm found a control. 65% matched within the same event and
+  FF12 industry; 35% used the same-quarter fallback.
+
+| Mega-cap | Treated | Same-quarter fallback |
+|---|---|---|
+| NVDA | 1,105 | **0%** |
+| AAPL | 3,467 | 11% |
+| AMZN | 3,143 | 27% |
+| GOOGL | 2,922 | 28% |
+| MSFT | 3,257 | 32% |
+| META | 4,530 | 62% |
+
+Nvidia reports late in each earnings season, away from the other mega-caps,
+so every Nvidia-day firm finds a control in its own event. Meta, Microsoft and
+Alphabet often report in the same week, which leaves few clean control days.
+
+| Balance (1:1, medians) | Treated | Control |
+|---|---|---|
+| Market cap ($M) | 3,607 | 3,726 |
+| SUE (% of price) | 0.080 | 0.080 |
+| % miss | 24.0% | 23.3% |
+| Analysts | 8 | 8 |
+
+## Abnormal returns (CAR)
+
+From `src/06_car.py` (`output/car_summary.md`). Market = CRSP value-weighted
+index (CIZ indno 1000200, identical to legacy `vwretd`).
+
+| | Coverage |
+|---|---|
+| CAR(0,+1), market model | 98.4% |
+| CAR(0,+1), market-adjusted | 100% |
+| CAR(+2,+60), market model | 94.8% (missing after 2 Oct 2025: not enough data yet) |
+
+**WRDS spot check (10 random events):** daily returns are identical to the
+WRDS Event Study tool. CAR(0,+1) differs by at most 0.09 percentage points.
+CAR(+2,+60) differs by at most 1.55 pp (mean about 0.4 pp), because the tool's
+market benchmark is slightly different from `vwretd` and the difference adds
+up over 59 days. Our estimation window (−250 to −30) is the closest fit to
+the tool's α and β of every window we tried.
+
+!!! note "Long-window level"
+    CAR(+2,+60) averages −2.0% (market model). The typical stock has
+    underperformed a market led by the mega-caps since 2018. This affects
+    treated and control firms alike, so it cancels in the comparison, but a
+    size-matched or factor benchmark is a planned robustness check.
+
+### First look: CAR path, treated vs control
+
+![CAR paths](assets/car_paths.png)
+
+1:1 matched sample with a complete +60 window. **Descriptive only:** no
+controls, no standard errors.
+
+- **Day 0:** treated and control lines jump by almost the same amount. No sign
+  of a weaker reaction on mega-cap days.
+- **Drift:** after bad news, treated firms keep falling *less* than controls
+  (about −3.8% vs −4.5% by day 60). That is the opposite of H1's prediction.
+
+### Drift by surprise quintile (mean CAR, %)
+
+| SUE quintile | CAR(0,+1) control | CAR(0,+1) treated | CAR(+2,+60) control | CAR(+2,+60) treated |
+|---|---|---|---|---|
+| Q1 (worst) | −3.96 | −3.77 | −0.76 | 0.24 |
+| Q2 | −1.21 | −1.82 | −2.41 | −1.83 |
+| Q3 | 0.72 | 0.22 | −2.22 | −1.92 |
+| Q4 | 1.46 | 1.73 | −1.39 | −1.14 |
+| Q5 (best) | 4.07 | 4.11 | −1.02 | −0.75 |
+| **Q5 − Q1** | **8.03** | **7.89** | **−0.26** | **−0.99** |
+
+- **Immediate reaction:** the Q5 − Q1 spread is almost the same for treated
+  (7.89%) and control (8.03%) firms.
+- **Drift:** the long-short drift is slightly *negative* in both groups, so
+  there is no classic post-earnings drift in 2018 to 2025. It is more negative
+  for treated firms, driven by worst-surprise firms partly reversing. H1
+  predicts the opposite.
+- With CAR(+2,+60) standard deviations near 23%, these gaps are within about
+  one to two standard errors. The regressions (E1, E2) will test them
+  properly.
+
+## Control variables
+
+From `src/07_controls.py` (`output/controls_summary.md`):
+
+| Control | Missing (all) | Missing (1:1 sample) | Median |
+|---|---|---|---|
+| logsize | 0.0% | 0.0% | 7.89 (≈ $2.7B) |
+| bm | **6.4%** | **5.0%** | 0.38 |
+| log_analysts | 0.0% | 0.0% | 2.08 (7 analysts) |
+| pastret | 2.4% | 1.2% | 7.6% |
+| samedaycount | 0.0% | 0.0% | 135 |
+
+`bm` is above 5% because 3,590 announcements come from firms with negative
+or zero book equity, where book-to-market is undefined. Only 236 (0.4%) lack
+Compustat data. Plan: set bm = 0 with a negative-book-equity dummy in the
+main spec, and drop those firms as a robustness check.
+
+Treated firms report on busier days than controls (median 170 vs 146 other
+announcements), which is why the same-day count is a control.
 
 ## Early analysis: Nvidia, 26 August 2026
 

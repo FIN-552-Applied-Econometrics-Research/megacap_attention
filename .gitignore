@@ -6,6 +6,12 @@ data/**
 data/**/*.csv
 data/**/*.parquet
 
+# ---- Firm-level WRDS-derived files in output/ (licence: never push) ----
+# WRDS Event Study downloads contain CRSP daily returns
+output/wrds_eventstudy_*.csv
+# Spot-check file: firm-level CARs built from CRSP
+output/car_spotcheck.csv
+
 # ---- Credentials ----
 .env
 *.env
