@@ -42,7 +42,8 @@ release to find these firms and test whether their news is priced more slowly
 | 3 | Main regressions (β₃) | :white_check_mark: Done. No crowding out or in: β₃ ≈ 0, CI rules out effects beyond ±⅓ of the normal response |
 | 3 | Calendar-time portfolio alphas | :white_check_mark: Done. No significant alpha in either group |
 | 3 | Event-time placebo | :white_check_mark: Done. No peak at the mega-cap day |
-| 3 | Robustness, attention check | :hourglass: Next |
+| 3 | Attention check (Wikipedia) | :white_check_mark: Done. Attention to treated firms falls about 3%, prices unaffected |
+| 3 | Robustness | :hourglass: Next |
 
 ## Quick start
 

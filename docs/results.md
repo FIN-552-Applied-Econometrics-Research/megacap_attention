@@ -2,8 +2,8 @@
 
 !!! info "Status"
     Data pipeline (E0) and main regressions (E1, E2, market-move control)
-    are complete. **Headline: β₃ ≈ 0. No evidence of crowding out or
-    crowding in.** Remaining tests (portfolio, placebo, robustness,
+    are complete. **Headline: attention to treated firms falls on mega-cap
+    days, but prices respond normally (β₃ ≈ 0).** Remaining tests (portfolio, placebo, robustness,
     attention check) are listed on [Experiments](experiments.md). Sections
     below go from the main result to how the data were built.
 
@@ -20,6 +20,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | 3. Balance test | [`output/tables/balance.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/balance.tex) | `notebooks/10_summary.ipynb` |
 | 4. Main regressions, all firms (base and + market move) | [`output/tables/main.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main.tex) | `src/08_regress.py` |
 | 6. Calendar-time portfolio alphas | [`output/tables/alpha.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/alpha.tex) | `src/09_portfolio.py` |
+| 7. Attention (Wikipedia pageviews) | [`output/tables/attention.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/attention.tex) | `src/11_attention.py` |
 | 5. Main regressions, small and low-coverage halves | [`output/tables/main_halves.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_halves.tex) | `src/08_regress.py` |
 
 | Figure | File | Made by |
@@ -71,6 +72,45 @@ CAR(0,+1) and β₃ > 0 for CAR(+2,+60).
 
 !!! abstract "What β₃ means"
     Across every specification, β₃ is close to zero and far from significant. In the main model a 1 percentage point earnings surprise moves the two-day CAR by 1.99% on an ordinary day (β₁, t = 5.05), and on a mega-cap day by essentially the same amount (β₃ = −0.03, t = −0.09). The 95% confidence interval of [−0.63, 0.58] rules out a change of more than about a third of the normal response in either direction (−32% to +29% of β₁). The drift model gives the same answer (β₃ = −0.19, t = −0.29, CI [−1.48, 1.10]), and so do the small-firm and low-coverage halves, where crowding out should be strongest. Their CAR(0,+1) point estimates are slightly negative (about −10% of β₁), but they are insignificant, and the matching drift coefficients have the wrong sign for H1. Fama-MacBeth estimates agree. We therefore find no evidence that mega-cap earnings days either crowd out or crowd in the pricing of other firms' news in 2018 to 2025. Two caveats bound this null. The interval still includes effects as large as the 17% macro-day effect of Hirshleifer and Sheng (2022). And β₁ in the drift model is itself insignificant: there is little post-earnings drift in this period for a distraction effect to create.
+
+## Attention check (Table 7)
+
+From `src/11_attention.py` (`output/tables/attention.tex`). English
+Wikipedia pageviews (users, all access), with each firm's page found through
+the SEC CIK recorded in Wikidata (P5531). Abnormal views = log(1 + views on
+the reaction day) − log(1 + median daily views over the 56 days ending 3 days
+before). 1:1 matched sample; 57% of announcements have a page (6,486 treated,
+6,397 control).
+
+| | Treated | Control | Difference |
+|---|---|---|---|
+| Abnormal views, mean (log points) | 0.213 | 0.270 | −0.057 (t = −9.00) |
+| Implied change vs baseline | +23.7% | +31.0% | |
+| Matched pairs (4,160) | | | −0.064 (t = −8.71) |
+| Regression on MegaDay, clustered by day | | | −0.057 (t = −4.31) |
+| **+ controls** (day of week, quarter, industry, baseline views, size, analysts, same-day count) | | | **−0.029 (t = −3.51)** |
+| Nvidia days only, with controls | | | −0.014 (t = −0.71) |
+| Other five mega-caps, with controls | | | −0.029 (t = −3.46) |
+| Same-event matches only, with controls | | | −0.018 (t = −1.98) |
+
+!!! success "Attention moves, prices do not"
+    **Attention to treated firms does drop on mega-cap days.** Both groups get
+    more Wikipedia traffic on their earnings day, but treated firms get
+    noticeably less of a boost (+24% vs +31%). About half of the raw gap
+    comes from timing (day of week and season); a robust gap of about 3% of
+    views remains with full controls (t = −3.5). The drop comes from the five
+    mega-caps that report in clustered peak weeks; Nvidia days alone show no
+    significant drop.
+
+    Put together with β₃ ≈ 0 (Table 4), the evidence says mega-cap days do
+    **crowd out attention but not price discovery**: earnings news is
+    priced just as fast and as fully even when fewer people look at the
+    firm. That fits the proposal's alternative: professional and algorithmic
+    readers of disclosures, rather than the retail attention Wikipedia
+    measures, set prices on earnings days.
+
+Caveats: Wikipedia measures mostly retail and casual attention, and firms
+with a page are larger and better known than the average sample firm.
 
 ## Calendar-time portfolio alphas (Table 6)
 

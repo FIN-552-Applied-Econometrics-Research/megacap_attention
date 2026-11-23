@@ -13,7 +13,7 @@ as experiments are completed.
 | E4 | [Event-time placebo](#e4-event-time-placebo) | :white_check_mark: Done. Flat across days −3..+3; day 0 not special |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
 | E6 | [Robustness](#e6-robustness) | Planned |
-| E7 | [Attention check](#e7-attention-check) | Planned |
+| E7 | [Attention check](#e7-attention-check) | :white_check_mark: Done. Attention to treated firms ~3% lower (t = −3.5), but prices respond normally |
 
 ---
 
@@ -91,3 +91,6 @@ Split E1 and E2 by:
 Abnormal Google search volume and Wikipedia pageviews for treated versus
 control firms. If H1 holds, treated firms should get less attention on their
 announcement day.
+
+- **Script:** `src/11_attention.py` → `output/tables/attention.tex`
+- **Result:** abnormal views +23.7% (treated) vs +31.0% (control); MegaDay coefficient −0.029 (t = −3.51) with controls. Driven by the five clustered mega-caps; Nvidia days −0.014 (t = −0.71). See [Results](results.md)
