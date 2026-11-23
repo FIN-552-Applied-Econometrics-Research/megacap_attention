@@ -12,7 +12,7 @@ as experiments are completed.
 | E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :white_check_mark: Done. No significant alpha; treated − control −3.2%/yr (t = −0.68) |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | :white_check_mark: Done. Flat across days −3..+3; day 0 not special |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
-| E6 | [Robustness](#e6-robustness) | :hourglass: In progress (market-adjusted drift, same-week twins done) |
+| E6 | [Robustness](#e6-robustness) | :hourglass: In progress (market-adjusted drift, same-week twins, linked firms and co-movement done) |
 | E7 | [Attention check](#e7-attention-check) | :white_check_mark: Done. Attention to treated firms ~3% lower (t = −3.5), but prices respond normally |
 
 ---
@@ -82,8 +82,7 @@ Split E1 and E2 by:
 
 - **Done:** same-week twins only (`src/12_robust_sameweek.py` → `output/tables/robust_sameweek.tex`). Keeps 65% of treated announcements (Meta 38%, Nvidia 100%); β₃ for CAR(0,+1) moves from −0.03 to −0.31 (t = −0.96), still insignificant; drift β₃ ≈ 0. See [Results](results.md)
 
-- Drop industries linked to the mega-caps (AI and semiconductor supply chain)
-- Control for past return co-movement with the mega-cap
+- **Done:** drop industries linked to the mega-caps and, separately, control for co-movement with the mega-cap (`src/13_robust_linked.py` → `output/tables/robust_linked.tex`). Linked = chips, semiconductor equipment, computer/networking hardware and 195 Compustat Segments customers of the mega-caps (8.1% of the sample). β₃ unchanged in both (CAR(0,+1): −0.016 and −0.030 vs −0.028)
 - Only firms that keep their usual reporting schedule (strategic-timing check)
 - Compare EDGAR release times with Compustat `rdq` and I/B/E/S `anndats`
 - **Done:** drift regression with market-adjusted CAR(+2,+60) instead of market-model (β₃ = 0.16, t = 0.25). The market-model α distorts 60-day drift, see [Results](results.md)
