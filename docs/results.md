@@ -19,6 +19,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | 2. Descriptive statistics | same file as Table 1 | `notebooks/10_summary.ipynb` |
 | 3. Balance test | [`output/tables/balance.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/balance.tex) | `notebooks/10_summary.ipynb` |
 | 4. Main regressions, all firms (base and + market move) | [`output/tables/main.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main.tex) | `src/08_regress.py` |
+| 6. Calendar-time portfolio alphas | [`output/tables/alpha.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/alpha.tex) | `src/09_portfolio.py` |
 | 5. Main regressions, small and low-coverage halves | [`output/tables/main_halves.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_halves.tex) | `src/08_regress.py` |
 
 | Figure | File | Made by |
@@ -69,6 +70,43 @@ CAR(0,+1) and β₃ > 0 for CAR(+2,+60).
 
 !!! abstract "What β₃ means"
     Across every specification, β₃ is close to zero and far from significant. In the main model a 1 percentage point earnings surprise moves the two-day CAR by 1.99% on an ordinary day (β₁, t = 5.05), and on a mega-cap day by essentially the same amount (β₃ = −0.03, t = −0.09). The 95% confidence interval of [−0.63, 0.58] rules out a change of more than about a third of the normal response in either direction (−32% to +29% of β₁). The drift model gives the same answer (β₃ = −0.19, t = −0.29, CI [−1.48, 1.10]), and so do the small-firm and low-coverage halves, where crowding out should be strongest. Their CAR(0,+1) point estimates are slightly negative (about −10% of β₁), but they are insignificant, and the matching drift coefficients have the wrong sign for H1. Fama-MacBeth estimates agree. We therefore find no evidence that mega-cap earnings days either crowd out or crowd in the pricing of other firms' news in 2018 to 2025. Two caveats bound this null. The interval still includes effects as large as the 17% macro-day effect of Hirshleifer and Sheng (2022). And β₁ in the drift model is itself insignificant: there is little post-earnings drift in this period for a distraction effect to create.
+
+## Calendar-time portfolio alphas (Table 6)
+
+From `src/09_portfolio.py` (`output/tables/alpha.tex`). Each quarter all
+announcements are sorted into SUE quintiles. The portfolio buys top-quintile
+and sells bottom-quintile announcements, holding each from day +2 to +61,
+equal-weighted. Daily long-short returns; Newey-West (10 lags) *t*-statistics.
+Factors from Ken French's data library.
+
+| | Treated | Control | Treated − Control |
+|---|---|---|---|
+| CAPM alpha (% per year) | 4.15 (t = 1.11) | 7.58* (t = 1.83) | −3.06 (t = −0.65) |
+| **FF5 + UMD alpha (% per year)** | **3.00 (t = 0.83)** | **6.61 (t = 1.64)** | **−3.20 (t = −0.68)** |
+| Avg. stocks long / short | 70 / 58 | 46 / 41 | |
+| Days (dropped: < 5 per side) | 1,976 (12) | 1,985 (8) | 1,974 |
+| Break-even cost (bp per one-way trade) | 14.0 | 33.8 | |
+
+- **No significant drift alpha in either group.** Once the six factors are
+  included, neither long-short portfolio earns a significant alpha. The
+  significant RMW and UMD loadings show that good-news firms tend to be
+  profitable past winners.
+- **Treated firms drift *less*, not more** (−3.2% per year relative to
+  controls, insignificant). H1 predicts the opposite, matching the regressions.
+- **Not tradable after costs.** Break-even costs of 14 bp (treated) and 34 bp
+  (control) per trade are at or below typical spreads for small and mid caps.
+
+!!! warning "Market-model α distorts the 60-day drift"
+    The Q5 − Q1 CAR(+2,+60) was negative with market-model CARs
+    (treated −0.99%, control −0.26%) but **positive** with market-adjusted
+    CARs (+0.93%, +0.57%). Bad-news firms had falling prices before the
+    announcement, so their estimated α is negative, and carrying it forward
+    over 59 days inflates their measured drift; the reverse holds for good
+    news. This is the long-horizon problem of Fama (1998) and Lyon, Barber
+    and Tsai (1999). The calendar-time portfolio avoids it. **Re-running the
+    drift regression with market-adjusted CARs leaves β₃ at zero**
+    (0.16, t = 0.25; with the market-move control 0.05, t = 0.09), so the
+    main result is unaffected.
 
 ## Sample and balance
 
