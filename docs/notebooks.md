@@ -18,6 +18,7 @@ site can show them after a commit.
 | Notebook | Reads output of | What it is for |
 |---|---|---|
 | [`06_car_checks.ipynb`](#06_car_checksipynb) | `src/06_car.py` | CAR coverage, WRDS spot check, CAR paths, drift by SUE quintile |
+| [`10_summary.ipynb`](#10_summaryipynb) | `src/05_match.py`, `06_car.py`, `07_controls.py` | Tables 1 to 3 for the paper: sample, descriptives, balance test |
 
 ---
 
@@ -101,3 +102,32 @@ long-short spread:
 !!! warning "Descriptive only"
     These are raw averages with no controls and no standard errors. The
     formal tests are the regressions in [Experiments](experiments.md) E1 to E3.
+
+---
+
+## `10_summary.ipynb`
+
+**Run after:** `05_match.py`, `06_car.py`, `07_controls.py`
+**Reads:** `data/processed/sample.parquet` (1:1 match: each treated announcement and its closest control)
+**Writes:** `output/tables/summary.tex` (Tables 1 and 2) and `output/tables/balance.tex` (Table 3)
+
+| Table | Content |
+|---|---|
+| 1. Sample by year | Events, treated announcements and firms, control announcements and firms (1:1 and 1:3) |
+| 2. Descriptive statistics | Mean, median, SD and N of SUE, share of negative surprises, every control, and both CARs, for treated and control separately |
+| 3. Balance test | Treated mean, control mean, difference with Welch *t*-statistic, and the standardized difference. Panel A: pre-announcement variables. Panel B: outcomes, for reference |
+
+**Standardized difference** = \((\bar x_T - \bar x_C) / \sqrt{(s_T^2 + s_C^2)/2}\).
+With about 12,500 announcements per group, tiny gaps can be statistically
+significant, so |std. diff| < 0.1 is the usual guide to balance.
+
+The tables are self-contained `table` floats that need `\usepackage{booktabs}`.
+To use them in the paper:
+
+```latex
+\input{../output/tables/summary}
+\input{../output/tables/balance}
+```
+
+The last cell of the notebook holds the two-sentence balance verdict (see
+[Results](results.md#sample-and-balance)).

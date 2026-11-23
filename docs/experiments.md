@@ -33,6 +33,7 @@ merged with returns, surprises and controls.
 | Treated / control matching | `src/05_match.py` | `data/processed/sample.parquet`, `output/match_summary.md` | :white_check_mark: 12,568 treated, 139 events |
 | Abnormal returns (CAR) | `src/06_car.py`, `notebooks/06_car_checks.ipynb` | `data/processed/car.parquet`, CAR columns in `sample.parquet` | :white_check_mark: WRDS spot check passed |
 | Control variables | `src/07_controls.py` | `data/processed/controls.parquet`, columns in `sample.parquet` | :white_check_mark: All < 5% missing except bm (6.4%) |
+| Summary statistics and balance (Tables 1 to 3) | `notebooks/10_summary.ipynb` | `output/tables/summary.tex`, `balance.tex` | :white_check_mark: Balanced (SUE std. diff 0.007) |
 | Add delisted firms (Compustat CIKs) | _optional_ | | Not started |
 | Earliest release time (EDGAR vs I/B/E/S `anntims`) | _follow-up_ | | Not started |
 | Negative book equity dummy (`neg_be`) | `src/07_controls.py` | | Not started |

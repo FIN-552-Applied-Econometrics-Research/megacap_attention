@@ -166,6 +166,33 @@ From `src/04_sue.py` (`output/sue_summary.md`):
     (`anntims`), so the fix is to take the earliest credible time of EDGAR and
     I/B/E/S, as the proposal planned.
 
+## Sample and balance
+
+From `notebooks/10_summary.ipynb` (`output/tables/summary.tex`,
+`output/tables/balance.tex`), 1:1 matched sample.
+
+| Variable | Treated | Control | Difference | *t* | Std. diff. |
+|---|---|---|---|---|---|
+| SUE (% of price) | 0.124 | 0.118 | 0.006 | 0.52 | 0.007 |
+| Negative surprise (share) | 0.240 | 0.233 | 0.007 | 1.37 | 0.017 |
+| Log market cap | 8.264 | 8.289 | −0.025 | −1.16 | −0.015 |
+| Book-to-market | 0.497 | 0.479 | 0.018*** | 3.45 | 0.045 |
+| Log(1 + analysts) | 2.140 | 2.162 | −0.022** | −2.54 | −0.032 |
+| Past return (%) | 17.35 | 16.76 | 0.59 | 0.94 | 0.012 |
+| Same-day announcements | 170.3 | 144.9 | 25.3*** | 24.33 | **0.307** |
+
+!!! success "Balance verdict"
+    **The groups are balanced on everything a firm could choose or that
+    matching targeted.** SUE is almost identical (0.124% vs 0.118% of price,
+    *t* = 0.52, std. diff. 0.007), and so is the share of negative surprises
+    (24.0% vs 23.3%), so there is no sign that firms pick mega-cap days to
+    hide bad news; every other pre-announcement variable has a standardized
+    difference below 0.05, and the two significant ones (book-to-market and
+    analyst coverage) are significant only because of the large sample.
+    The one real difference is the same-day announcement count (std. diff.
+    0.31), higher for treated firms by construction because mega-cap days
+    fall in peak earnings weeks; it enters every regression as a control.
+
 ## Treated / control matching
 
 From `src/05_match.py` (`output/match_summary.md`):
