@@ -12,7 +12,7 @@ as experiments are completed.
 | E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :white_check_mark: Done. No significant alpha; treated − control −3.2%/yr (t = −0.68) |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | :white_check_mark: Done. Flat across days −3..+3; day 0 not special |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
-| E6 | [Robustness](#e6-robustness) | Planned |
+| E6 | [Robustness](#e6-robustness) | :hourglass: In progress (market-adjusted drift, same-week twins done) |
 | E7 | [Attention check](#e7-attention-check) | :white_check_mark: Done. Attention to treated firms ~3% lower (t = −3.5), but prices respond normally |
 
 ---
@@ -79,6 +79,8 @@ Split E1 and E2 by:
 - **Done (card 12):** |market return| and its interaction with SUE added to E1/E2. β₃ unchanged (0.05, t = 0.15). See [Results](results.md)
 
 ## E6: Robustness
+
+- **Done:** same-week twins only (`src/12_robust_sameweek.py` → `output/tables/robust_sameweek.tex`). Keeps 65% of treated announcements (Meta 38%, Nvidia 100%); β₃ for CAR(0,+1) moves from −0.03 to −0.31 (t = −0.96), still insignificant; drift β₃ ≈ 0. See [Results](results.md)
 
 - Drop industries linked to the mega-caps (AI and semiconductor supply chain)
 - Control for past return co-movement with the mega-cap
