@@ -9,7 +9,7 @@ as experiments are completed.
 | E0 | [Data pipeline](#e0-data-pipeline) | :white_check_mark: Done (follow-ups listed) |
 | E1 | [Immediate reaction](#e1-immediate-reaction) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.09) |
 | E2 | [Post-announcement drift](#e2-post-announcement-drift) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.29) |
-| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :hourglass: Next |
+| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :white_check_mark: Done. No significant alpha; treated − control −3.2%/yr (t = −0.68) |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | Planned |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
 | E6 | [Robustness](#e6-robustness) | Planned |
@@ -59,6 +59,8 @@ merged with returns, surprises and controls.
 - Alphas against CAPM, FF5 and FF5 + momentum
 - Same portfolio from matched controls, as a benchmark
 - Break-even trading cost (Novy-Marx and Velikov, 2016)
+- **Script:** `src/09_portfolio.py` → `output/tables/alpha.tex`
+- **Result:** FF5 + UMD alpha 3.0%/yr treated (t = 0.83), 6.6%/yr control (t = 1.64), difference −3.2%/yr (t = −0.68). Break-even cost 14 bp (treated), 34 bp (control). See [Results](results.md)
 
 ## E4: Event-time placebo
 
@@ -80,6 +82,7 @@ Split E1 and E2 by:
 - Control for past return co-movement with the mega-cap
 - Only firms that keep their usual reporting schedule (strategic-timing check)
 - Compare EDGAR release times with Compustat `rdq` and I/B/E/S `anndats`
+- **Done:** drift regression with market-adjusted CAR(+2,+60) instead of market-model (β₃ = 0.16, t = 0.25). The market-model α distorts 60-day drift, see [Results](results.md)
 
 ## E7: Attention check
 

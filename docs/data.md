@@ -22,7 +22,8 @@ so everyone's copy matches the code.
 | `data/processed/sample.parquet` | `src/05_match.py` (+ `06`, `07` add columns) | Matched treated + controls | 49,689 rows | 2018 to 2025 | Done |
 | `data/processed/car.parquet`, `ar_paths.parquet` | `src/06_car.py` | CRSP returns + VW market | 59,775 | 2018 to 2025 | Done |
 | `data/processed/controls.parquet` | `src/07_controls.py` | CRSP daily, `comp.funda`, I/B/E/S, EDGAR | 59,775 | 2018 to 2025 | Done |
-| Fama-French factors | _to do_ | WRDS `ff.factors_daily` | | to 2026-09 | Planned |
+| `data/raw/ff_factors_daily.parquet` | `src/09_portfolio.py` | Ken French data library (5 factors 2x3 + momentum, daily, in %) | | 1963-07 to 2026-09 | Done |
+| `data/processed/portfolio_daily.parquet` | `src/09_portfolio.py` | Daily long-short returns, counts and turnover, treated and control | about 1,980 days | 2018 to 2025 | Done |
 
 ---
 
