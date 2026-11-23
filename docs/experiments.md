@@ -13,6 +13,7 @@ as experiments are completed.
 | E4 | [Event-time placebo](#e4-event-time-placebo) | :white_check_mark: Done. Flat across days −3..+3; day 0 not special |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
 | E6 | [Robustness](#e6-robustness) | :white_check_mark: Mostly done: same-week twins, spillover, return models, delisted firms (release-time fix open) |
+| E8 | [Over time, 2005–2025](#e8-over-time) | :white_check_mark: Done. No significant effect in any period; periods equal (p = 0.39) |
 | E7 | [Attention check](#e7-attention-check) | :white_check_mark: Done. Attention to treated firms ~3% lower (t = −4.0), but prices respond normally |
 
 ---
@@ -95,3 +96,12 @@ announcement day.
 
 - **Script:** `src/11_attention.py` → `output/tables/attention.tex`
 - **Result (full sample):** abnormal views +23.8% (treated) vs +31.1% (control); MegaDay coefficient −0.032 (t = −4.02) with controls. Driven by the five clustered mega-caps; Nvidia days −0.013 (t = −0.71). See [Results](results.md)
+
+## E8: Over time
+
+- **Question:** did mega-cap days slow price reactions in earlier years and stop?
+- **Script:** `src/16_longrun.py` (separate 2005–2025 sample in `data/longrun/`)
+- **Mega-caps:** top 6 by market value at the start of each year (`output/megacaps_by_year.csv`)
+- **Tests:** β₃ for 2005–10, 2011–17, 2018–25; Wald test of equality; β₃ × time trend; busy-day benchmark
+- **Result:** β₃ = −0.32, −0.19, +0.15 (none significant); periods equal (p = 0.39); trend insignificant.
+  The busy-day effect is positive in 2005–17 and zero after. See [Results](results.md)
