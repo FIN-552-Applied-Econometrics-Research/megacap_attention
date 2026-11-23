@@ -39,7 +39,8 @@ release to find these firms and test whether their news is priced more slowly
 | 2 | Abnormal returns (CAR) | :white_check_mark: Done. WRDS spot check passed |
 | 2 | Control variables | :white_check_mark: Done. bm 6.4% missing (negative book equity) |
 | 2 | Summary statistics and balance | :white_check_mark: Done. Groups balanced; SUE std. diff 0.007 |
-| 3 | Main regressions and portfolio tests | :hourglass: Next |
+| 3 | Main regressions (β₃) | :white_check_mark: Done. No crowding out or in: β₃ ≈ 0, CI rules out effects beyond ±⅓ of the normal response |
+| 3 | Portfolio tests, placebo, robustness | :hourglass: Next |
 
 ## Quick start
 

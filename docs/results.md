@@ -166,6 +166,28 @@ From `src/04_sue.py` (`output/sue_summary.md`):
     (`anntims`), so the fix is to take the earliest credible time of EDGAR and
     I/B/E/S, as the proposal planned.
 
+## Main result (β₃)
+
+From `src/08_regress.py` (`output/tables/main.tex`). 1:1 matched sample;
+SUE and CARs in percent; controls, industry and quarter fixed effects;
+standard errors clustered by reaction day.
+
+| | (1) All, CAR(0,+1) | (2) All, CAR(+2,+60) | (3) Small, CAR(0,+1) | (4) Small, CAR(+2,+60) | (5) Low cov., CAR(0,+1) | (6) Low cov., CAR(+2,+60) |
+|---|---|---|---|---|---|---|
+| SUE (β₁) | 1.994*** (5.05) | −0.913 (−0.60) | 1.861*** (4.40) | −1.421 (−0.83) | 2.219*** (4.55) | −1.404 (−0.66) |
+| MegaDay (β₂) | −0.099 (−0.65) | 0.622 (1.64) | 0.039 (0.17) | 0.757 (1.34) | −0.043 (−0.20) | 0.415 (0.81) |
+| **SUE × MegaDay (β₃)** | **−0.028 (−0.09)** | **−0.191 (−0.29)** | **−0.186 (−0.56)** | **−0.084 (−0.12)** | **−0.229 (−0.63)** | **−0.267 (−0.31)** |
+| 95% CI for β₃ | [−0.63, 0.58] | [−1.48, 1.10] | [−0.84, 0.47] | [−1.51, 1.34] | [−0.94, 0.49] | [−1.94, 1.41] |
+| Fama-MacBeth β₃ | 0.237 (0.89) | −0.259 (−0.28) | 0.228 (0.69) | −0.236 (−0.22) | 0.565 (1.48) | −0.539 (−0.41) |
+| N | 24,815 | 24,145 | 12,327 | 11,994 | 12,342 | 12,021 |
+| R² | 0.047 | 0.207 | 0.056 | 0.221 | 0.061 | 0.226 |
+
+*t*-statistics in parentheses. Crowding out (H1) predicts β₃ < 0 in the
+CAR(0,+1) columns and β₃ > 0 in the CAR(+2,+60) columns.
+
+!!! abstract "What β₃ means"
+    Across every specification, β₃ is close to zero and far from significant. In the main model a 1 percentage point earnings surprise moves the two-day CAR by 1.99% on an ordinary day (β₁, t = 5.05), and on a mega-cap day by essentially the same amount (β₃ = −0.03, t = −0.09). The 95% confidence interval of [−0.63, 0.58] rules out a change of more than about a third of the normal response in either direction (−32% to +29% of β₁). The drift model gives the same answer (β₃ = −0.19, t = −0.29, CI [−1.48, 1.10]), and so do the small-firm and low-coverage halves, where crowding out should be strongest. Their CAR(0,+1) point estimates are slightly negative (about −10% of β₁), but they are insignificant, and the matching drift coefficients have the wrong sign for H1. Fama-MacBeth estimates agree. We therefore find no evidence that mega-cap earnings days either crowd out or crowd in the pricing of other firms' news in 2018 to 2025. Two caveats bound this null. The interval still includes effects as large as the 17% macro-day effect of Hirshleifer and Sheng (2022). And β₁ in the drift model is itself insignificant: there is little post-earnings drift in this period for a distraction effect to create.
+
 ## Sample and balance
 
 From `notebooks/10_summary.ipynb` (`output/tables/summary.tex`,

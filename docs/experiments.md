@@ -7,9 +7,9 @@ as experiments are completed.
 | ID | Experiment | Status |
 |---|---|---|
 | E0 | [Data pipeline](#e0-data-pipeline) | :white_check_mark: Done (follow-ups listed) |
-| E1 | [Immediate reaction](#e1-immediate-reaction) | :hourglass: Next |
-| E2 | [Post-announcement drift](#e2-post-announcement-drift) | Planned |
-| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | Planned |
+| E1 | [Immediate reaction](#e1-immediate-reaction) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.09) |
+| E2 | [Post-announcement drift](#e2-post-announcement-drift) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.29) |
+| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :hourglass: Next |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | Planned |
 | E5 | [Heterogeneity](#e5-heterogeneity) | Planned |
 | E6 | [Robustness](#e6-robustness) | Planned |
@@ -44,6 +44,8 @@ merged with returns, surprises and controls.
 - **Spec:** main regression on the [Methodology](methodology.md#main-regression) page
 - **Key coefficient:** \(\beta_3\) on \(\SUE \times \MegaDay\)
 - **SEs:** clustered by reaction date
+- **Script:** `src/08_regress.py` → `output/tables/main.tex`
+- **Result:** β₃ = −0.03 (t = −0.09), 95% CI [−0.63, 0.58]. See [Results](results.md#main-result-3)
 
 ## E2: Post-announcement drift
 
