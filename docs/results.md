@@ -25,6 +25,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | Figure | File | Made by |
 |---|---|---|
 | SUE distribution | `output/figures/sue_hist.png` | `src/04_sue.py` |
+| Event-time placebo | `output/figures/placebo.png` | `src/10_placebo.py` |
 | CAR paths, treated vs control | `output/figures/car_paths.png` | `notebooks/06_car_checks.ipynb` |
 
 ## Main result (β₃)
@@ -107,6 +108,38 @@ Factors from Ken French's data library.
     drift regression with market-adjusted CARs leaves β₃ at zero**
     (0.16, t = 0.25; with the market-move control 0.05, t = 0.09), so the
     main result is unaffected.
+
+## Event-time placebo
+
+From `src/10_placebo.py`. The main model with SUE × Day\(_k\) for
+\(k = -3, \dots, +3\) trading days from the nearest mega-cap reaction day, in
+place of SUE × MegaDay. Full sample of 59,583 non-mega-cap announcements; the
+reference group is announcements 4 or more trading days from any mega-cap day.
+Same controls, fixed effects and clustering as Table 4.
+
+![Event-time placebo](assets/placebo.png)
+
+| k | −3 | −2 | −1 | **0** | +1 | +2 | +3 |
+|---|---|---|---|---|---|---|---|
+| CAR(0,+1) | 0.61 (1.54) | 0.58 (1.62) | 0.96 (3.01) | **0.80 (3.24)** | 0.39 (1.31) | 0.88 (3.64) | 0.77 (3.08) |
+| CAR(+2,+60) | −0.17 (−0.22) | 0.21 (0.30) | −0.36 (−0.86) | **−0.33 (−0.92)** | 0.16 (0.32) | −0.86 (−0.75) | 0.83 (2.15) |
+
+*t*-statistics in parentheses. Normal response to SUE in this sample:
+β₁ = 1.33 (CAR(0,+1)), 0.43 (CAR(+2,+60)).
+
+- **No peak at the mega-cap day.** Day 0 (0.80) sits right at the average of
+  the six surrounding days (0.70), well inside every neighbour's confidence
+  interval.
+- **The whole window around mega-cap days reacts more strongly than the
+  reference group.** All seven CAR(0,+1) coefficients are positive. This is a
+  peak-season effect: announcements far from any mega-cap day are off-peak
+  reporters, whose news gets a weaker response. It is not anticipation of the
+  mega-cap, so the positive pre-day-0 coefficients are not the red flag the
+  test looks for.
+- This is the same null as Table 4 from a different angle: the matched design
+  compares day 0 with days ±2 to ±5, and 0.80 vs about 0.8 gives β₃ ≈ 0.
+- Drift: no pattern; one of the 14 coefficients (+3 days, drift) is
+  significant at 5%, about what chance alone would produce.
 
 ## Sample and balance
 

@@ -10,7 +10,7 @@ as experiments are completed.
 | E1 | [Immediate reaction](#e1-immediate-reaction) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.09) |
 | E2 | [Post-announcement drift](#e2-post-announcement-drift) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.29) |
 | E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :white_check_mark: Done. No significant alpha; treated − control −3.2%/yr (t = −0.68) |
-| E4 | [Event-time placebo](#e4-event-time-placebo) | Planned |
+| E4 | [Event-time placebo](#e4-event-time-placebo) | :white_check_mark: Done. Flat across days −3..+3; day 0 not special |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
 | E6 | [Robustness](#e6-robustness) | Planned |
 | E7 | [Attention check](#e7-attention-check) | Planned |
@@ -66,6 +66,8 @@ merged with returns, surprises and controls.
 
 - Replace \(\MegaDay\) with dummies for days −3 … +3 around each mega-cap reaction day
 - **Expect:** effect peaks at day 0 and is zero before
+- **Script:** `src/10_placebo.py` → `output/figures/placebo.png`
+- **Result:** no peak at day 0. All seven CAR(0,+1) coefficients are similar (0.39 to 0.96; day 0 = 0.80 vs 0.70 average of the other days), reflecting a season-wide effect rather than a mega-cap-day effect. See [Results](results.md)
 
 ## E5: Heterogeneity
 
