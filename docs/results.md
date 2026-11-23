@@ -1,11 +1,11 @@
 # Results
 
 !!! info "Status"
-    Data pipeline (E0) and main regressions (E1, E2, market-move control)
-    are complete. **Headline: attention to treated firms falls on mega-cap
-    days, but prices respond normally (β₃ ≈ 0).** Remaining tests (portfolio, placebo, robustness,
-    attention check) are listed on [Experiments](experiments.md). Sections
-    below go from the main result to how the data were built.
+    All results use the **full sample including delisted firms** (task 19):
+    132,380 earnings releases, 75,050 with an earnings surprise, 15,284
+    treated announcements on 139 mega-cap days. **Headline: β₃ ≈ 0. Mega-cap
+    days crowd out attention, but not price discovery.**
+    Sections go from the main result to how the data were built.
 
 ## Tables for the paper
 
@@ -19,18 +19,19 @@ Every table is a self-contained LaTeX `table` float (needs
 | 2. Descriptive statistics | same file as Table 1 | `notebooks/10_summary.ipynb` |
 | 3. Balance test | [`output/tables/balance.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/balance.tex) | `notebooks/10_summary.ipynb` |
 | 4. Main regressions, all firms (base and + market move) | [`output/tables/main.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main.tex) | `src/08_regress.py` |
+| 5. Main regressions, small and low-coverage halves | [`output/tables/main_halves.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_halves.tex) | `src/08_regress.py` |
 | 6. Calendar-time portfolio alphas | [`output/tables/alpha.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/alpha.tex) | `src/09_portfolio.py` |
 | 7. Attention (Wikipedia pageviews) | [`output/tables/attention.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/attention.tex) | `src/11_attention.py` |
 | 8. Robustness: same-week twins only | [`output/tables/robust_sameweek.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_sameweek.tex) | `src/12_robust_sameweek.py` |
-| 9. Robustness: news spillover (linked firms, co-movement) | [`output/tables/robust_linked.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_linked.tex) | `src/13_robust_linked.py` |
+| 9. Robustness: news spillover | [`output/tables/robust_linked.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_linked.tex) | `src/13_robust_linked.py` |
 | 10. Drift under three return models | [`output/tables/drift_robust.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/drift_robust.tex) | `src/14_drift_robust.py` |
-| 5. Main regressions, small and low-coverage halves | [`output/tables/main_halves.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_halves.tex) | `src/08_regress.py` |
+| 11. Adding delisted firms: before vs after | [`output/tables/main_with_delisted.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_with_delisted.tex) | `src/15_delisted.py report` |
 
 | Figure | File | Made by |
 |---|---|---|
 | SUE distribution | `output/figures/sue_hist.png` | `src/04_sue.py` |
-| Event-time placebo | `output/figures/placebo.png` | `src/10_placebo.py` |
 | CAR paths, treated vs control | `output/figures/car_paths.png` | `notebooks/06_car_checks.ipynb` |
+| Event-time placebo | `output/figures/placebo.png` | `src/10_placebo.py` |
 
 ## Main result (β₃)
 
@@ -38,253 +39,241 @@ From `src/08_regress.py` (`output/tables/main.tex`, `main_halves.tex`).
 1:1 matched sample; SUE, CARs and |market return| in percent; controls,
 industry and quarter fixed effects; standard errors clustered by reaction day.
 "+ Market move" adds |market return on the reaction day| and its interaction
-with SUE (card 12).
+with SUE.
 
 **Table 4: all firms**
 
 | | (1) CAR(0,+1) | (2) CAR(0,+1) + market move | (3) CAR(+2,+60) | (4) CAR(+2,+60) + market move |
 |---|---|---|---|---|
-| SUE (β₁) | 1.994*** (5.05) | 2.108*** (5.01) | −0.913 (−0.60) | −0.955 (−0.61) |
-| MegaDay (β₂) | −0.099 (−0.65) | −0.077 (−0.50) | 0.622 (1.64) | 0.628* (1.65) |
-| **SUE × MegaDay (β₃)** | **−0.028 (−0.09)** | **0.046 (0.15)** | **−0.191 (−0.29)** | **−0.222 (−0.35)** |
-| \|Market return\| × SUE | | −0.169 (−0.97) | | 0.064 (0.22) |
-| 95% CI for β₃ | [−0.63, 0.58] | [−0.55, 0.65] | [−1.48, 1.10] | [−1.48, 1.04] |
-| Fama-MacBeth β₃ | 0.237 (0.89) | −0.020 (−0.06) | −0.259 (−0.28) | −0.930 (−0.69) |
-| N | 24,815 | 24,815 | 24,145 | 24,145 |
-| R² | 0.047 | 0.047 | 0.207 | 0.207 |
+| SUE (β₁) | 1.838*** (5.97) | 1.931*** (6.02) | −0.936 (−0.76) | −0.697 (−0.54) |
+| MegaDay (β₂) | −0.141 (−0.97) | −0.144 (−0.96) | 0.404 (1.15) | 0.382 (1.07) |
+| **SUE × MegaDay (β₃)** | **−0.081 (−0.33)** | **−0.019 (−0.07)** | **0.351 (0.61)** | **0.521 (0.90)** |
+| \|Market return\| × SUE | | −0.134 (−0.90) | | −0.349 (−1.21) |
+| **95% CI for β₃** | **[−0.56, 0.39]** | **[−0.52, 0.49]** | **[−0.78, 1.49]** | **[−0.61, 1.65]** |
+| CI as % of β₁ | −30% to +21% | −27% to +25% | | |
+| Fama-MacBeth β₃ | −0.204 (−0.72) | −0.247 (−0.64) | 0.504 (0.53) | 0.043 (0.04) |
+| N | 30,135 | 30,135 | 29,430 | 29,430 |
+| R² | 0.043 | 0.044 | 0.195 | 0.196 |
 
-**Table 5: β₃ in the halves where crowding out should be strongest**
+**Table 5: β₃ where crowding out should be strongest**
 
 | | Small, CAR(0,+1) | Small, CAR(+2,+60) | Low cov., CAR(0,+1) | Low cov., CAR(+2,+60) |
 |---|---|---|---|---|
-| β₃, base | −0.186 (−0.56) | −0.084 (−0.12) | −0.229 (−0.63) | −0.267 (−0.31) |
-| β₃, + market move | −0.104 (−0.32) | −0.100 (−0.14) | −0.132 (−0.37) | −0.328 (−0.40) |
-| N | 12,327 | 11,994 | 12,342 | 12,021 |
+| β₃, base | −0.194 (−0.74) | 0.485 (0.74) | −0.165 (−0.60) | 0.352 (0.49) |
+| 95% CI | [−0.71, 0.32] | [−0.79, 1.76] | [−0.70, 0.37] | [−1.06, 1.76] |
+| β₃, + market move | −0.133 (−0.48) | 0.660 (1.01) | −0.074 (−0.26) | 0.391 (0.54) |
+| N | 14,983 | 14,633 | 15,022 | 14,674 |
 
 *t*-statistics in parentheses. Crowding out (H1) predicts β₃ < 0 for
 CAR(0,+1) and β₃ > 0 for CAR(+2,+60).
 
-!!! info "Market move vs distraction (card 12)"
-    Mega-cap days do move the market more (median |return| 0.76% vs 0.59%
-    on control days), but controlling for it leaves β₃ essentially unchanged
-    (−0.03 → 0.05 for CAR(0,+1), −0.19 → −0.22 for drift, all insignificant),
-    so the market move was not hiding any crowding out. In the small-firm and
-    low-coverage halves β₃ becomes *less* negative, which means the small
-    negative point estimates there partly reflected the market move rather
-    than distraction.
-
 !!! abstract "What β₃ means"
-    Across every specification, β₃ is close to zero and far from significant. In the main model a 1 percentage point earnings surprise moves the two-day CAR by 1.99% on an ordinary day (β₁, t = 5.05), and on a mega-cap day by essentially the same amount (β₃ = −0.03, t = −0.09). The 95% confidence interval of [−0.63, 0.58] rules out a change of more than about a third of the normal response in either direction (−32% to +29% of β₁). The drift model gives the same answer (β₃ = −0.19, t = −0.29, CI [−1.48, 1.10]), and so do the small-firm and low-coverage halves, where crowding out should be strongest. Their CAR(0,+1) point estimates are slightly negative (about −10% of β₁), but they are insignificant, and the matching drift coefficients have the wrong sign for H1. Fama-MacBeth estimates agree. We therefore find no evidence that mega-cap earnings days either crowd out or crowd in the pricing of other firms' news in 2018 to 2025. Two caveats bound this null. The interval still includes effects as large as the 17% macro-day effect of Hirshleifer and Sheng (2022). And β₁ in the drift model is itself insignificant: there is little post-earnings drift in this period for a distraction effect to create.
+    Across every specification, β₃ is close to zero and far from
+    significant. A 1 percentage point earnings surprise moves the two-day CAR
+    by 1.84% on an ordinary day (β₁, t = 5.97) and by essentially the same
+    amount on a mega-cap day (β₃ = −0.08, t = −0.33). **The 95% confidence
+    interval, [−0.56, 0.39], rules out a mega-cap-day effect larger than
+    about 30% of the normal response in the crowding-out direction or 21% in
+    the crowding-in direction.** The drift model, the small-firm and
+    low-coverage halves, the market-move control and Fama-MacBeth estimates
+    all agree. Two caveats bound the null: the interval still admits effects
+    as large as the 17% macro-day effect of Hirshleifer and Sheng (2022), and
+    there is no post-earnings drift in this period (β₁ for drift is
+    insignificant) for a distraction effect to create.
+
+!!! tip "How to report a null: lead with the interval"
+    "Not significant" alone could mean the test is too noisy to detect
+    anything. The confidence interval says what the data **rule out**. Report
+    β₃'s interval in every table, and in the text scale it by the normal
+    response β₁: "the earnings response on mega-cap days is within −30% to
+    +21% of the normal response". Every robustness section below gives its
+    interval for the same reason.
+
+!!! info "Market move vs distraction (card 12)"
+    Controlling for the size of the market move on the reaction day leaves
+    β₃ essentially unchanged (−0.08 → −0.02 for CAR(0,+1); 0.35 → 0.52 for
+    drift; all insignificant), so the market move was not hiding any crowding
+    out.
+
+## Adding delisted firms (Table 11)
+
+From `src/15_delisted.py`. The original EDGAR pull started from the SEC's
+*current* ticker list, so firms that stopped trading before late 2025 were
+missing. Their 8-K Item 2.02 filings were added and every step re-run; CARs
+include CRSP delisting returns (already inside `crsp.dsf_v2` daily returns,
+flagged on 4,826 delisting days).
+
+| | Survivors only | Full sample | Added |
+|---|---|---|---|
+| EDGAR 8-K 2.02 announcements | 105,088 | 132,380 | +27,292 |
+| Firms (CIK) | 3,958 | 5,675 | +1,717 |
+| Linked US common stocks | 82,735 | 107,539 | +24,804 |
+| With SUE (price ≥ $5) | 59,775 | 75,050 | +15,275 |
+| Treated announcements | 12,568 | 15,284 | +2,716 |
+| Control announcements (distinct) | 8,310 | 10,162 | +1,852 |
+
+82% of the added announcements come from delisted stocks. They are smaller
+(median market cap $1.1B vs $2.7B) and miss expectations more often (35% vs
+28%), exactly where distraction should matter most.
+
+| β₃ | Survivors only | Full sample |
+|---|---|---|
+| CAR(0,+1) | −0.028 (t = −0.09), CI [−0.63, 0.58] | −0.081 (t = −0.33), CI [−0.56, 0.39] |
+| CAR(+2,+60) | −0.191 (t = −0.29), CI [−1.48, 1.10] | 0.351 (t = 0.61), CI [−0.78, 1.49] |
+
+The immediate-reaction result is unchanged and its interval is narrower. The
+drift β₃ turns positive (the crowding-out direction) but stays far from
+significant. The survivor-only sample was not hiding an effect.
+
+## Robustness: same-week twins only (Table 8)
+
+From `src/12_robust_sameweek.py`. 36% of treated announcements had no
+same-industry twin in their own event week and borrowed one from elsewhere in
+the quarter. Keeping only same-week pairs:
+
+| | CAR(0,+1), all twins | CAR(0,+1), same week | CAR(+2,+60), all twins | CAR(+2,+60), same week |
+|---|---|---|---|---|
+| β₃, base | −0.081 (−0.33) | **−0.225 (−0.85)** | 0.351 (0.61) | 0.248 (0.35) |
+| 95% CI | [−0.56, 0.39] | [−0.75, 0.30] | [−0.78, 1.49] | [−1.16, 1.65] |
+| β₃, + market move | −0.019 (−0.07) | −0.129 (−0.45) | 0.521 (0.90) | 0.361 (0.52) |
+| N | 30,135 | 19,461 | 29,430 | 18,756 |
+
+| Mega-cap | Treated | Same-week twin | Kept |
+|---|---|---|---|
+| NVDA | 1,396 | 1,389 | 99% |
+| AAPL | 4,289 | 3,858 | 90% |
+| AMZN | 3,949 | 2,792 | 71% |
+| GOOGL | 3,482 | 2,495 | 72% |
+| MSFT | 3,884 | 2,629 | 68% |
+| META | 5,360 | 2,006 | 37% |
+| **All** | **15,284** | **9,858** | **64%** |
+
+The restriction costs 36% of treated announcements and 36 of 139 events. β₃
+moves towards crowding out (−0.08 → −0.23) but stays insignificant, and the
+intervals overlap almost completely. The borrowed twins were not driving the
+result.
+
+## Robustness: news spillover (Table 9)
+
+From `src/13_robust_linked.py`. Linked firms (7.8% of the sample): the
+Fama-French 48 Chips industry, semiconductor equipment (SIC 3559), computer
+and networking hardware (SIC 3570–3579), and 195 firms that name a mega-cap
+as a major customer in Compustat Segments. Co-movement controls: each firm's
+beta on the relevant mega-cap's daily return (days −250 to −30) and that beta
+× the mega-cap's return on the reaction day.
+
+| | CAR(0,+1) | CAR(+2,+60) |
+|---|---|---|
+| β₃, baseline | −0.081 (t = −0.33) | 0.351 (t = 0.61) |
+| β₃, linked firms dropped | −0.081 (t = −0.33), CI [−0.57, 0.41] | 0.523 (t = 0.86), CI [−0.67, 1.72] |
+| β₃, co-movement controls | −0.083 (t = −0.34) | 0.360 (t = 0.62) |
+
+β₃ does not move when linked firms are dropped or co-movement is controlled
+for. The null result is not spillover news cancelling a distraction effect.
 
 ## Robustness: drift under three return models (Table 10)
 
-From `src/14_drift_robust.py`. The drift regression (Table 4, column 3) with
-three different abnormal-return models for CAR(+2,+60):
-
-- **Market model:** return − (α̂ + β̂ × market), estimated over days −250 to −30
-- **Market-adjusted:** return − market, with nothing estimated
-- **Size/BM-adjusted:** return − the equal-weighted return of the firm's 5×5
-  size × book-to-market cell, formed each quarter (a simplified DGTW benchmark;
-  breakpoints from the sample universe, median 68 stocks per cell-day)
+From `src/14_drift_robust.py`. CAR(+2,+60) under the market model,
+market-adjusted returns (nothing estimated), and returns adjusted by the
+firm's 5×5 size × book-to-market cell (a simplified DGTW benchmark).
 
 | | Market model | Market-adjusted | Size/BM-adjusted |
 |---|---|---|---|
-| SUE (β₁) | −0.913 (t = −0.60) | −0.675 (−0.47) | −1.041 (−0.69) |
-| MegaDay (β₂) | 0.622 (1.64) | 0.414 (1.11) | 0.210 (0.67) |
-| **SUE × MegaDay (β₃)** | **−0.191 (−0.29)** | **0.161 (0.25)** | **0.417 (0.66)** |
-| 95% CI for β₃ | [−1.48, 1.10] | [−1.08, 1.40] | [−0.83, 1.66] |
-| Mean drift (%) | −1.44 | −0.38 | −0.44 |
-| N | 24,145 | 24,145 | 23,049 |
+| SUE (β₁) | −0.936 (t = −0.76) | −0.711 (−0.60) | −0.983 (−0.79) |
+| MegaDay (β₂) | 0.404 (1.15) | 0.294 (0.85) | 0.210 (0.72) |
+| **SUE × MegaDay (β₃)** | **0.351 (0.61)** | **0.607 (1.07)** | **0.689 (1.18)** |
+| 95% CI for β₃ | [−0.78, 1.49] | [−0.50, 1.72] | [−0.45, 1.83] |
+| Mean drift (%) | −1.40 | −0.44 | −0.41 |
+| N | 29,430 | 29,430 | 28,125 |
 
 !!! info "Why the versions differ (sentence for the paper)"
     The market model subtracts each stock's estimated pre-announcement alpha
     for 59 days, so stocks that fell before bad news (or rose before good
-    news) mechanically show a reversal-like drift. Market-adjusted and
-    size/BM-adjusted returns carry no such trend, which moves β₃ from −0.19
-    to +0.16 and +0.42 — towards the sign crowding out predicts — but none
-    is close to significant and all three confidence intervals overlap.
+    news) mechanically show a reversal-like drift; market-adjusted and
+    size/BM-adjusted returns carry no such trend, which moves β₃ from 0.35 to
+    0.61 and 0.69, in the direction crowding out predicts, but none is
+    significant and all three intervals overlap.
 
-The conclusion does not depend on the return model: there is no significant
-mega-cap-day effect on drift, and no significant post-earnings drift at all
-(β₁) in 2018 to 2025. The marginal MegaDay level effect in the market-model
-drift (β₂ = 0.62, t = 1.64) shrinks to 0.21 (t = 0.67) with the size/BM
-benchmark, so it was an artefact of the estimated alpha too.
-
-## Robustness: news spillover (Table 9)
-
-From `src/13_robust_linked.py`. A mega-cap's results can be real news for
-linked firms, which would mix information with distraction. Two checks, same
-controls and clustering as Table 4:
-
-- **Linked firms dropped:** the Fama-French 48 Chips industry (SIC 3622,
-  3661–3666, 3669–3679, 3810, 3812), semiconductor equipment (SIC 3559) and
-  computer and networking hardware (SIC 3570–3579), plus **195 firms that
-  name a mega-cap as a major customer** in Compustat Segments (2017 to 2025).
-  Together 8.1% of the sample (6.3% by industry, 2.9% by customer link;
-  treated and control 8.1% each).
-- **Co-movement controls:** each firm's beta on the relevant mega-cap's daily
-  return (days −250 to −30, median 0.30) and that beta × the mega-cap's own
-  return on the reaction day.
-
-| | CAR(0,+1) | CAR(+2,+60) |
-|---|---|---|
-| N, linked firms dropped | 22,812 | 22,194 |
-| β₃, baseline | −0.028 (t = −0.09) | −0.191 (t = −0.29) |
-| β₃, linked firms dropped | −0.016 (t = −0.05) | −0.137 (t = −0.20) |
-| β₃, co-movement controls | −0.030 (t = −0.10) | −0.188 (t = −0.29) |
-| Beta × mega-cap return on day 0 | −0.037 (t = −0.79) | 0.089 (t = 0.93) |
-
-!!! info "Not about news spillover"
-    β₃ does not move when linked firms are dropped or when co-movement with
-    the mega-cap is controlled for. The co-movement terms themselves are
-    insignificant: once abnormal returns remove the market, a firm's link to
-    the mega-cap does not explain its earnings reaction. The null result is
-    not spillover news cancelling out a distraction effect.
-
-## Robustness: same-week twins only (Table 8)
-
-From `src/12_robust_sameweek.py`. 35% of treated announcements had no
-same-industry twin in their own event week and borrowed one from elsewhere in
-the quarter. This keeps only the pairs matched within the same week and re-runs
-Table 4 with identical controls and clustering.
-
-| | CAR(0,+1), all twins | CAR(0,+1), same week | CAR(+2,+60), all twins | CAR(+2,+60), same week |
-|---|---|---|---|---|
-| β₃, base | −0.028 (t = −0.09) | **−0.314 (t = −0.96)** | −0.191 (−0.29) | −0.018 (−0.02) |
-| 95% CI | [−0.63, 0.58] | [−0.96, 0.33] | [−1.48, 1.10] | [−1.65, 1.61] |
-| β₃, + market move | 0.046 (0.15) | −0.186 (−0.57) | −0.222 (−0.35) | −0.145 (−0.18) |
-| N | 24,815 | 16,058 | 24,145 | 15,388 |
-
-| Mega-cap | Treated | Same-week twin | Kept |
-|---|---|---|---|
-| NVDA | 1,105 | 1,100 | 100% |
-| AAPL | 3,467 | 3,102 | 89% |
-| AMZN | 3,143 | 2,295 | 73% |
-| GOOGL | 2,922 | 2,113 | 72% |
-| MSFT | 3,257 | 2,210 | 68% |
-| META | 4,530 | 1,714 | 38% |
-| **All** | **12,568** | **8,121** | **65%** |
-
-Events with at least one same-week pair: 103 of 139.
-
-!!! info "Does the null hold?"
-    **Yes.** Keeping only same-week twins costs 35% of the treated
-    announcements (Meta keeps only 38%) and 36 of 139 events. The immediate-
-    reaction β₃ moves from −0.03 to −0.31, in the crowding-out direction
-    (about 15% of the normal response of 2.04), but it stays far from
-    significant (t = −0.96) and its confidence interval overlaps the
-    baseline almost completely. With the market-move control it is −0.19
-    (t = −0.57). The drift β₃ stays at zero. The borrowed twins were not
-    hiding a crowding-out effect; at most they diluted a small one we cannot
-    distinguish from zero.
-
-## Attention check (Table 7)
-
-From `src/11_attention.py` (`output/tables/attention.tex`). English
-Wikipedia pageviews (users, all access), with each firm's page found through
-the SEC CIK recorded in Wikidata (P5531). Abnormal views = log(1 + views on
-the reaction day) − log(1 + median daily views over the 56 days ending 3 days
-before). 1:1 matched sample; 57% of announcements have a page (6,486 treated,
-6,397 control).
-
-| | Treated | Control | Difference |
-|---|---|---|---|
-| Abnormal views, mean (log points) | 0.213 | 0.270 | −0.057 (t = −9.00) |
-| Implied change vs baseline | +23.7% | +31.0% | |
-| Matched pairs (4,160) | | | −0.064 (t = −8.71) |
-| Regression on MegaDay, clustered by day | | | −0.057 (t = −4.31) |
-| **+ controls** (day of week, quarter, industry, baseline views, size, analysts, same-day count) | | | **−0.029 (t = −3.51)** |
-| Nvidia days only, with controls | | | −0.014 (t = −0.71) |
-| Other five mega-caps, with controls | | | −0.029 (t = −3.46) |
-| Same-event matches only, with controls | | | −0.018 (t = −1.98) |
-
-!!! success "Attention moves, prices do not"
-    **Attention to treated firms does drop on mega-cap days.** Both groups get
-    more Wikipedia traffic on their earnings day, but treated firms get
-    noticeably less of a boost (+24% vs +31%). About half of the raw gap
-    comes from timing (day of week and season); a robust gap of about 3% of
-    views remains with full controls (t = −3.5). The drop comes from the five
-    mega-caps that report in clustered peak weeks; Nvidia days alone show no
-    significant drop.
-
-    Put together with β₃ ≈ 0 (Table 4), the evidence says mega-cap days do
-    **crowd out attention but not price discovery**: earnings news is
-    priced just as fast and as fully even when fewer people look at the
-    firm. That fits the proposal's alternative: professional and algorithmic
-    readers of disclosures, rather than the retail attention Wikipedia
-    measures, set prices on earnings days.
-
-Caveats: Wikipedia measures mostly retail and casual attention, and firms
-with a page are larger and better known than the average sample firm.
+The conclusion does not depend on the return model, and no model shows
+post-earnings drift at all (β₁).
 
 ## Calendar-time portfolio alphas (Table 6)
 
-From `src/09_portfolio.py` (`output/tables/alpha.tex`). Each quarter all
-announcements are sorted into SUE quintiles. The portfolio buys top-quintile
-and sells bottom-quintile announcements, holding each from day +2 to +61,
-equal-weighted. Daily long-short returns; Newey-West (10 lags) *t*-statistics.
-Factors from Ken French's data library.
+From `src/09_portfolio.py`. Each quarter, announcements are sorted into SUE
+quintiles; the portfolio buys the top quintile and sells the bottom, holding
+each from day +2 to +61, equal-weighted. Newey-West (10 lags) *t*-statistics;
+factors from Ken French's data library.
 
 | | Treated | Control | Treated − Control |
 |---|---|---|---|
-| CAPM alpha (% per year) | 4.15 (t = 1.11) | 7.58* (t = 1.83) | −3.06 (t = −0.65) |
-| **FF5 + UMD alpha (% per year)** | **3.00 (t = 0.83)** | **6.61 (t = 1.64)** | **−3.20 (t = −0.68)** |
-| Avg. stocks long / short | 70 / 58 | 46 / 41 | |
-| Days (dropped: < 5 per side) | 1,976 (12) | 1,985 (8) | 1,974 |
-| Break-even cost (bp per one-way trade) | 14.0 | 33.8 | |
+| CAPM alpha (% per year) | 6.32 (t = 1.76) | 7.85 (t = 1.83) | −1.06 (t = −0.23) |
+| **FF5 + UMD alpha (% per year)** | **5.08 (t = 1.47)** | **6.85 (t = 1.64)** | **−1.26 (t = −0.27)** |
+| Avg. stocks long / short | 84 / 68 | 55 / 48 | |
+| Days (dropped: < 5 per side) | 1,977 (11) | 1,985 (8) | 1,974 |
+| Break-even cost (bp per one-way trade) | 23.3 | 34.5 | |
 
-- **No significant drift alpha in either group.** Once the six factors are
-  included, neither long-short portfolio earns a significant alpha. The
-  significant RMW and UMD loadings show that good-news firms tend to be
-  profitable past winners.
-- **Treated firms drift *less*, not more** (−3.2% per year relative to
-  controls, insignificant). H1 predicts the opposite, matching the regressions.
-- **Not tradable after costs.** Break-even costs of 14 bp (treated) and 34 bp
-  (control) per trade are at or below typical spreads for small and mid caps.
-
-!!! warning "Market-model α distorts the 60-day drift"
-    The Q5 − Q1 CAR(+2,+60) was negative with market-model CARs
-    (treated −0.99%, control −0.26%) but **positive** with market-adjusted
-    CARs (+0.93%, +0.57%). Bad-news firms had falling prices before the
-    announcement, so their estimated α is negative, and carrying it forward
-    over 59 days inflates their measured drift; the reverse holds for good
-    news. This is the long-horizon problem of Fama (1998) and Lyon, Barber
-    and Tsai (1999). The calendar-time portfolio avoids it. **Re-running the
-    drift regression with market-adjusted CARs leaves β₃ at zero**
-    (0.16, t = 0.25; with the market-move control 0.05, t = 0.09), so the
-    main result is unaffected.
+No significant drift alpha in either group, treated firms earn slightly
+*less* than controls (the opposite of crowding out), and break-even costs of
+23–35 bp are at or below typical small- and mid-cap spreads.
 
 ## Event-time placebo
 
 From `src/10_placebo.py`. The main model with SUE × Day\(_k\) for
-\(k = -3, \dots, +3\) trading days from the nearest mega-cap reaction day, in
-place of SUE × MegaDay. Full sample of 59,583 non-mega-cap announcements; the
-reference group is announcements 4 or more trading days from any mega-cap day.
-Same controls, fixed effects and clustering as Table 4.
+\(k = -3, \dots, +3\) trading days from the nearest mega-cap day. Full sample of
+72,478 non-mega-cap announcements; reference group: 4 or more trading days
+from any mega-cap day.
 
 ![Event-time placebo](assets/placebo.png)
 
 | k | −3 | −2 | −1 | **0** | +1 | +2 | +3 |
 |---|---|---|---|---|---|---|---|
-| CAR(0,+1) | 0.61 (1.54) | 0.58 (1.62) | 0.96 (3.01) | **0.80 (3.24)** | 0.39 (1.31) | 0.88 (3.64) | 0.77 (3.08) |
-| CAR(+2,+60) | −0.17 (−0.22) | 0.21 (0.30) | −0.36 (−0.86) | **−0.33 (−0.92)** | 0.16 (0.32) | −0.86 (−0.75) | 0.83 (2.15) |
+| CAR(0,+1) | 0.52 (1.22) | 0.82 (2.88) | 0.94 (3.16) | **0.61 (3.21)** | 0.51 (1.88) | 0.60 (3.10) | 0.68 (3.08) |
+| CAR(+2,+60) | −0.38 (−0.49) | −0.19 (−0.33) | −0.52 (−1.12) | **−0.29 (−0.88)** | 0.10 (0.24) | −0.58 (−0.77) | 0.46 (1.35) |
 
-*t*-statistics in parentheses. Normal response to SUE in this sample:
-β₁ = 1.33 (CAR(0,+1)), 0.43 (CAR(+2,+60)).
+*t*-statistics in parentheses; β₁ = 1.27 (CAR(0,+1)), 0.24 (CAR(+2,+60)).
 
-- **No peak at the mega-cap day.** Day 0 (0.80) sits right at the average of
-  the six surrounding days (0.70), well inside every neighbour's confidence
-  interval.
-- **The whole window around mega-cap days reacts more strongly than the
-  reference group.** All seven CAR(0,+1) coefficients are positive. This is a
-  peak-season effect: announcements far from any mega-cap day are off-peak
-  reporters, whose news gets a weaker response. It is not anticipation of the
-  mega-cap, so the positive pre-day-0 coefficients are not the red flag the
-  test looks for.
-- This is the same null as Table 4 from a different angle: the matched design
-  compares day 0 with days ±2 to ±5, and 0.80 vs about 0.8 gives β₃ ≈ 0.
-- Drift: no pattern; one of the 14 coefficients (+3 days, drift) is
-  significant at 5%, about what chance alone would produce.
+- **No peak at the mega-cap day.** Day 0 (0.61) is slightly *below* the
+  average of the six surrounding days (0.68).
+- The whole window around mega-cap days reacts more strongly than off-peak
+  reporters: a peak-earnings-season effect, not anticipation of the
+  mega-cap.
+
+## Attention check (Table 7)
+
+From `src/11_attention.py`. English Wikipedia pageviews (users, all access),
+with each firm's page found through the SEC CIK recorded in Wikidata (P5531).
+Abnormal views = log(1 + views on the reaction day) − log(1 + median daily
+views over the 56 days ending 3 days before). 1:1 matched sample; 54% of
+announcements have a page (7,439 treated, 7,399 control; 1,336 companies).
+
+| | Treated | Control | Difference |
+|---|---|---|---|
+| Abnormal views, mean (log points) | 0.214 | 0.271 | −0.057 (t = −9.32) |
+| Implied change vs baseline | +23.8% | +31.1% | |
+| Matched pairs (4,594) | | | −0.062 (t = −8.70) |
+| Regression on MegaDay, clustered by day | | | −0.057 (t = −4.41) |
+| **+ controls** (day of week, quarter, industry, baseline views, size, analysts, same-day count) | | | **−0.032 (t = −4.02)** |
+| Nvidia days only, with controls | | | −0.013 (t = −0.71) |
+| Other five mega-caps, with controls | | | −0.032 (t = −3.95) |
+| Same-event matches only, with controls | | | −0.020 (t = −2.16) |
+
+!!! success "Attention moves, prices do not"
+    **Attention to treated firms does drop on mega-cap days.** Both groups
+    get more Wikipedia traffic on their earnings day, but treated firms get a
+    smaller boost (+24% vs +31%). About half of the raw gap comes from timing
+    (day of week and season); a robust gap of about 3% of views remains with
+    full controls (t = −4.0). The drop comes from the five mega-caps that
+    report in clustered peak weeks; Nvidia days alone show no significant
+    drop.
+
+    Put together with β₃ ≈ 0 (Table 4), mega-cap days **crowd out attention
+    but not price discovery**: earnings news is priced just as fast and as
+    fully even when fewer people look at the firm. Professional and
+    algorithmic readers of disclosures, not the casual attention Wikipedia
+    measures, set prices on earnings days.
+
+Caveats: Wikipedia measures mostly retail and casual attention, and firms
+with a page are larger and better known than the average sample firm.
 
 ## Sample and balance
 
@@ -295,15 +284,15 @@ From `notebooks/10_summary.ipynb` (`output/tables/summary.tex`,
 
 | Year | Events | Treated ann. | Treated firms | Control ann. (1:1) | Control firms (1:1) | Control ann. (1:3) |
 |---|---|---|---|---|---|---|
-| 2018 | 19 | 1,517 | 812 | 858 | 636 | 1,489 |
-| 2019 | 20 | 1,543 | 800 | 978 | 705 | 1,731 |
-| 2020 | 15 | 1,124 | 685 | 817 | 652 | 1,684 |
-| 2021 | 16 | 1,481 | 798 | 1,028 | 770 | 2,096 |
-| 2022 | 18 | 1,664 | 779 | 1,155 | 798 | 2,256 |
-| 2023 | 18 | 1,862 | 932 | 1,183 | 834 | 2,274 |
-| 2024 | 17 | 1,735 | 1,003 | 1,185 | 917 | 2,367 |
-| 2025 | 16 | 1,642 | 974 | 1,106 | 846 | 2,215 |
-| **Total** | **139** | **12,568** | **1,781** | **8,310** | **2,060** | **16,112** |
+| 2018 | 19 | 2,143 | 1,177 | 1,258 | 963 | 2,205 |
+| 2019 | 20 | 2,022 | 1,086 | 1,304 | 944 | 2,349 |
+| 2020 | 15 | 1,437 | 888 | 1,056 | 841 | 2,206 |
+| 2021 | 16 | 1,855 | 1,022 | 1,315 | 998 | 2,677 |
+| 2022 | 18 | 1,973 | 937 | 1,334 | 942 | 2,677 |
+| 2023 | 18 | 2,162 | 1,099 | 1,382 | 971 | 2,622 |
+| 2024 | 17 | 1,936 | 1,125 | 1,324 | 1,013 | 2,664 |
+| 2025 | 16 | 1,756 | 1,051 | 1,189 | 921 | 2,397 |
+| **Total** | **139** | **15,284** | **2,442** | **10,162** | **2,804** | **19,797** |
 
 Firm totals count each firm once.
 
@@ -311,129 +300,117 @@ Firm totals count each firm once.
 
 | | Treated mean | Treated median | Treated SD | Control mean | Control median | Control SD |
 |---|---|---|---|---|---|---|
-| SUE (% of price) | 0.124 | 0.080 | 0.884 | 0.118 | 0.080 | 0.812 |
-| Negative surprise (share) | 0.240 | 0 | 0.427 | 0.233 | 0 | 0.423 |
-| Log market cap ($M) | 8.264 | 8.177 | 1.741 | 8.289 | 8.204 | 1.714 |
-| Book-to-market | 0.497 | 0.396 | 0.410 | 0.479 | 0.367 | 0.403 |
-| Log(1 + analysts) | 2.140 | 2.197 | 0.688 | 2.162 | 2.197 | 0.675 |
-| Past return, −12 to −2 (%) | 17.35 | 8.92 | 48.82 | 16.76 | 8.36 | 50.37 |
-| Same-day announcements | 170.3 | 170 | 65.3 | 144.9 | 126 | 96.7 |
-| CAR(0,+1) (%) | 0.214 | 0.130 | 8.569 | 0.341 | 0.359 | 8.956 |
-| CAR(+2,+60) (%) | −1.185 | −0.981 | 17.598 | −1.656 | −1.013 | 20.109 |
+| SUE (% of price) | 0.120 | 0.082 | 0.971 | 0.123 | 0.082 | 0.869 |
+| Negative surprise (share) | 0.248 | 0 | 0.432 | 0.241 | 0 | 0.428 |
+| Log market cap ($M) | 8.085 | 8.014 | 1.744 | 8.108 | 8.041 | 1.715 |
+| Book-to-market | 0.519 | 0.411 | 0.430 | 0.495 | 0.385 | 0.421 |
+| Log(1 + analysts) | 2.110 | 2.079 | 0.691 | 2.133 | 2.197 | 0.681 |
+| Past return, −12 to −2 (%) | 16.94 | 8.21 | 49.54 | 16.22 | 7.20 | 51.09 |
+| Same-day announcements | 201.4 | 207 | 70.6 | 184.2 | 151 | 122.6 |
+| CAR(0,+1) (%) | 0.088 | 0.096 | 8.675 | 0.268 | 0.305 | 9.085 |
+| CAR(+2,+60) (%) | −1.207 | −1.076 | 18.383 | −1.587 | −0.854 | 20.780 |
 
-N = 12,568 per group (fewer where a variable is missing; see `summary.tex`).
+N = 15,284 per group (fewer where a variable is missing; see `summary.tex`).
 
 ### Table 3: balance test
 
 | Variable | Treated | Control | Difference | *t* | Std. diff. |
 |---|---|---|---|---|---|
-| SUE (% of price) | 0.124 | 0.118 | 0.006 | 0.52 | 0.007 |
-| Negative surprise (share) | 0.240 | 0.233 | 0.007 | 1.37 | 0.017 |
-| Log market cap | 8.264 | 8.289 | −0.025 | −1.16 | −0.015 |
-| Book-to-market | 0.497 | 0.479 | 0.018*** | 3.45 | 0.045 |
-| Log(1 + analysts) | 2.140 | 2.162 | −0.022** | −2.54 | −0.032 |
-| Past return (%) | 17.35 | 16.76 | 0.59 | 0.94 | 0.012 |
-| Same-day announcements | 170.3 | 144.9 | 25.3*** | 24.33 | **0.307** |
+| SUE (% of price) | 0.120 | 0.123 | −0.003 | −0.25 | −0.003 |
+| Negative surprise (share) | 0.248 | 0.241 | 0.007 | 1.33 | 0.015 |
+| Log market cap | 8.085 | 8.108 | −0.022 | −1.13 | −0.013 |
+| Book-to-market | 0.519 | 0.495 | 0.023*** | 4.68 | 0.055 |
+| Log(1 + analysts) | 2.110 | 2.133 | −0.023*** | −2.92 | −0.033 |
+| Past return (%) | 16.94 | 16.22 | 0.72 | 1.25 | 0.014 |
+| Same-day announcements | 201.4 | 184.2 | 17.2*** | 15.02 | **0.172** |
 
 !!! success "Balance verdict"
     **The groups are balanced on everything a firm could choose or that
-    matching targeted.** SUE is almost identical (0.124% vs 0.118% of price,
-    *t* = 0.52, std. diff. 0.007), and so is the share of negative surprises
-    (24.0% vs 23.3%), so there is no sign that firms pick mega-cap days to
-    hide bad news; every other pre-announcement variable has a standardized
-    difference below 0.05, and the two significant ones (book-to-market and
-    analyst coverage) are significant only because of the large sample.
-    The one real difference is the same-day announcement count (std. diff.
-    0.31), higher for treated firms by construction because mega-cap days
-    fall in peak earnings weeks; it enters every regression as a control.
+    matching targeted.** SUE is almost identical (0.120% vs 0.123% of price,
+    *t* = −0.25, std. diff. −0.003), and so is the share of negative
+    surprises (24.8% vs 24.1%), so there is no sign that firms pick mega-cap
+    days to hide bad news; every other pre-announcement variable has a
+    standardized difference below 0.06, and the two significant ones
+    (book-to-market and analyst coverage) are significant only because of the
+    large sample. The one real difference is the same-day announcement count
+    (std. diff. 0.17), higher by construction because mega-cap days fall in
+    peak earnings weeks; it enters every regression as a control.
 
 ## Treated / control matching
 
 From `src/05_match.py` (`output/match_summary.md`):
 
-- **12,568 treated announcements** from 1,781 firms on **139 mega-cap
-  events** (32 per mega-cap; some days are shared).
-- **Controls (1:1, with replacement):** 8,310 announcements from 2,060 firms.
-  The 1:3 robustness match uses 16,112.
-- Every treated firm found a control. 65% matched within the same event and
-  FF12 industry; 35% used the same-quarter fallback.
+- **15,284 treated announcements** from 2,442 firms on **139 mega-cap
+  events**, every one matched.
+- **Controls (1:1, with replacement):** 10,162 announcements from 2,804
+  firms. The 1:3 robustness match uses 19,797.
+- 64% matched within the same event and FF12 industry; 36% used the
+  same-quarter fallback (see the same-week robustness above).
 
-| Mega-cap | Treated | Same-quarter fallback |
+| Mega-cap | Treated | Same-week twin available |
 |---|---|---|
-| NVDA | 1,105 | **0%** |
-| AAPL | 3,467 | 11% |
-| AMZN | 3,143 | 27% |
-| GOOGL | 2,922 | 28% |
-| MSFT | 3,257 | 32% |
-| META | 4,530 | 62% |
-
-Nvidia reports late in each earnings season, away from the other mega-caps,
-so every Nvidia-day firm finds a control in its own event. Meta, Microsoft and
-Alphabet often report in the same week, which leaves few clean control days.
+| NVDA | 1,396 | 99% |
+| AAPL | 4,289 | 90% |
+| AMZN | 3,949 | 71% |
+| GOOGL | 3,482 | 72% |
+| MSFT | 3,884 | 68% |
+| META | 5,360 | 37% |
 
 | Balance (1:1, medians) | Treated | Control |
 |---|---|---|
-| Market cap ($M) | 3,607 | 3,726 |
-| SUE (% of price) | 0.080 | 0.080 |
-| % miss | 24.0% | 23.3% |
-| Analysts | 8 | 8 |
+| Market cap ($M) | 3,052 | 3,134 |
+| SUE (% of price) | 0.082 | 0.082 |
+| % miss | 24.8% | 24.1% |
+| Analysts | 7 | 8 |
 
 ## Abnormal returns (CAR)
 
 From `src/06_car.py` (`output/car_summary.md`). Market = CRSP value-weighted
-index (CIZ indno 1000200, identical to legacy `vwretd`).
+index (CIZ indno 1000200, identical to legacy `vwretd`). Delisting returns
+are included in the CRSP daily returns.
 
 | | Coverage |
 |---|---|
-| CAR(0,+1), market model | 98.4% |
+| CAR(0,+1), market model | 98.2% |
 | CAR(0,+1), market-adjusted | 100% |
-| CAR(+2,+60), market model | 94.8% (missing after 2 Oct 2025: not enough data yet) |
+| CAR(+2,+60), market model | 95.2% (missing after 2 Oct 2025: not enough data yet) |
+| Windows cut short by delisting | 603 |
 
-**WRDS spot check (10 random events):** daily returns are identical to the
-WRDS Event Study tool. CAR(0,+1) differs by at most 0.09 percentage points.
-CAR(+2,+60) differs by at most 1.55 pp (mean about 0.4 pp), because the tool's
-market benchmark is slightly different from `vwretd` and the difference adds
-up over 59 days. Our estimation window (−250 to −30) is the closest fit to
-the tool's α and β of every window we tried.
-
-!!! note "Long-window level"
-    CAR(+2,+60) averages −2.0% (market model). The typical stock has
-    underperformed a market led by the mega-caps since 2018. This affects
-    treated and control firms alike, so it cancels in the comparison, but a
-    size-matched or factor benchmark is a planned robustness check.
+**WRDS spot check (10 random events, survivor-only run):** daily returns
+identical to the WRDS Event Study tool; CAR(0,+1) within 0.09 percentage
+points; CAR(+2,+60) within 1.55 pp (mean about 0.4 pp), because the tool's
+market benchmark differs slightly from `vwretd`. The CAR method did not
+change with the full sample; the 10 events in `output/car_spotcheck_input.txt`
+are a new random draw if the check is repeated.
 
 ### First look: CAR path, treated vs control
 
 ![CAR paths](assets/car_paths.png)
 
-1:1 matched sample with a complete +60 window. **Descriptive only:** no
-controls, no standard errors.
+1:1 matched sample with a complete +60 window; descriptive only.
 
-- **Day 0:** treated and control lines jump by almost the same amount. No sign
-  of a weaker reaction on mega-cap days.
-- **Drift:** after bad news, treated firms keep falling *less* than controls
-  (about −3.8% vs −4.5% by day 60). That is the opposite of H1's prediction.
+| | Day +1 | Day +60 |
+|---|---|---|
+| Beat, treated / control | 1.77% / 1.90% | 0.44% / 0.29% |
+| Miss, treated / control | −3.25% / −3.04% | −4.23% / −4.21% |
+
+Treated and control paths are nearly identical on day 0 and over the
+following 60 days.
 
 ### Drift by surprise quintile (mean CAR, %)
 
 | SUE quintile | CAR(0,+1) control | CAR(0,+1) treated | CAR(+2,+60) control | CAR(+2,+60) treated |
 |---|---|---|---|---|
-| Q1 (worst) | −3.96 | −3.77 | −0.76 | 0.24 |
-| Q2 | −1.21 | −1.82 | −2.41 | −1.83 |
-| Q3 | 0.72 | 0.22 | −2.22 | −1.92 |
-| Q4 | 1.46 | 1.73 | −1.39 | −1.14 |
-| Q5 (best) | 4.07 | 4.11 | −1.02 | −0.75 |
-| **Q5 − Q1** | **8.03** | **7.89** | **−0.26** | **−0.99** |
+| Q1 (worst) | −4.05 | −3.84 | −0.77 | −0.35 |
+| Q2 | −1.34 | −2.06 | −2.28 | −1.78 |
+| Q3 | 0.43 | 0.02 | −2.27 | −1.75 |
+| Q4 | 1.66 | 1.72 | −1.08 | −1.28 |
+| Q5 (best) | 3.81 | 3.91 | −1.08 | −0.43 |
+| **Q5 − Q1** | **7.85** | **7.75** | **−0.31** | **−0.08** |
 
-- **Immediate reaction:** the Q5 − Q1 spread is almost the same for treated
-  (7.89%) and control (8.03%) firms.
-- **Drift:** the long-short drift is slightly *negative* in both groups, so
-  there is no classic post-earnings drift in 2018 to 2025. It is more negative
-  for treated firms, driven by worst-surprise firms partly reversing. H1
-  predicts the opposite.
-- With CAR(+2,+60) standard deviations near 23%, these gaps are within about
-  one to two standard errors. The regressions (E1, E2) will test them
-  properly.
+The immediate long-short spread is the same for treated and control firms,
+and there is no long-short drift in either group (market-model CARs; see
+Table 10 for other return models).
 
 ## Earnings surprise (SUE)
 
@@ -441,39 +418,29 @@ From `src/04_sue.py` (`output/sue_summary.md`):
 
 | Step | Announcements | % of linked sample |
 |---|---|---|
-| Linked US common stocks | 82,735 | 100.0% |
-| Matched to an I/B/E/S actual (within 3 days) | 70,992 | 85.8% |
-| With a consensus before the release | 70,434 | 85.1% |
-| Price ≥ $5 | **59,775** | 72.2% |
+| Linked US common stocks | 107,539 | 100.0% |
+| Matched to an I/B/E/S actual (within 3 days) | 91,760 | 85.3% |
+| With a consensus before the release | 90,991 | 84.6% |
+| Price ≥ $5 | **75,050** | 69.8% |
 
 ![SUE distribution](assets/sue_hist.png)
 
 | Year | N | Miss | Meet | Beat | % miss | Median SUE (% of price) | Median analysts |
 |---|---|---|---|---|---|---|---|
-| 2018 | 6,158 | 1,637 | 410 | 4,111 | 26.6% | 0.060 | 7 |
-| 2019 | 6,453 | 1,894 | 399 | 4,160 | 29.4% | 0.053 | 8 |
-| 2020 | 6,680 | 1,814 | 245 | 4,621 | 27.2% | 0.116 | 7 |
-| 2021 | 7,994 | 2,049 | 260 | 5,685 | 25.6% | 0.112 | 7 |
-| 2022 | 7,956 | 2,412 | 350 | 5,194 | 30.3% | 0.077 | 7 |
-| 2023 | 7,904 | 2,379 | 340 | 5,185 | 30.1% | 0.076 | 7 |
-| 2024 | 8,207 | 2,429 | 384 | 5,394 | 29.6% | 0.069 | 7 |
-| 2025 | 8,423 | 2,249 | 389 | 5,785 | 26.7% | 0.078 | 7 |
+| 2018 | 9,161 | 2,642 | 624 | 5,895 | 28.8% | 0.060 | 7 |
+| 2019 | 9,034 | 2,885 | 560 | 5,589 | 31.9% | 0.051 | 7 |
+| 2020 | 8,915 | 2,556 | 346 | 6,013 | 28.7% | 0.117 | 7 |
+| 2021 | 10,481 | 2,861 | 353 | 7,267 | 27.3% | 0.112 | 6 |
+| 2022 | 9,866 | 3,086 | 446 | 6,334 | 31.3% | 0.080 | 7 |
+| 2023 | 9,309 | 2,898 | 410 | 6,001 | 31.1% | 0.077 | 7 |
+| 2024 | 9,260 | 2,848 | 434 | 5,978 | 30.8% | 0.068 | 7 |
+| 2025 | 9,024 | 2,424 | 420 | 6,180 | 26.9% | 0.080 | 7 |
 
-- **Enough negative surprises:** 1,600 to 2,400 misses every year (26% to
-  30%), so the long-short portfolio has a short leg in every year.
-- The distribution is sharply peaked just above zero (firms narrowly beating
-  consensus) with fat tails, which is why SUE is winsorized.
-- **EDGAR vs I/B/E/S dates:** same day for 94.7%, I/B/E/S one day *earlier*
-  for 3.5%, one day later for 1.2%. The "one day earlier" cases are firms whose
-  press release came out before the 8-K was filed. See the follow-up below.
-- 17 observations needed a split adjustment between consensus and announcement.
+- 2,400 to 3,100 misses every year (27% to 32%).
+- EDGAR and I/B/E/S dates agree on the same day for 94.7%; for 4.1% I/B/E/S
+  is earlier (the press release came out before the 8-K). 21 observations
+  needed a split adjustment.
 
-!!! todo "Follow-up: release time for the 3.5% where I/B/E/S is earlier"
-    For 2,084 announcements the I/B/E/S date is the day before the EDGAR
-    filing. Where the press release came out the previous morning, our
-    reaction day is one day late. I/B/E/S also has an announcement time
-    (`anntims`), so the fix is to take the earliest credible time of EDGAR and
-    I/B/E/S, as the proposal planned.
 
 ## Control variables
 
@@ -481,19 +448,15 @@ From `src/07_controls.py` (`output/controls_summary.md`):
 
 | Control | Missing (all) | Missing (1:1 sample) | Median |
 |---|---|---|---|
-| logsize | 0.0% | 0.0% | 7.89 (≈ $2.7B) |
-| bm | **6.4%** | **5.0%** | 0.38 |
+| logsize | 0.0% | 0.0% | 7.67 (≈ $2.1B) |
+| bm | **6.9%** | **5.0%** | 0.39 |
 | log_analysts | 0.0% | 0.0% | 2.08 (7 analysts) |
-| pastret | 2.4% | 1.2% | 7.6% |
-| samedaycount | 0.0% | 0.0% | 135 |
+| pastret | 2.7% | 1.3% | 6.5% |
+| samedaycount | 0.0% | 0.0% | 169 |
 
-`bm` is above 5% because 3,590 announcements come from firms with negative
-or zero book equity, where book-to-market is undefined. Only 236 (0.4%) lack
-Compustat data. Plan: set bm = 0 with a negative-book-equity dummy in the
-main spec, and drop those firms as a robustness check.
-
-Treated firms report on busier days than controls (median 170 vs 146 other
-announcements), which is why the same-day count is a control.
+`bm` is above 5% because 4,788 announcements come from firms with negative or
+zero book equity (book-to-market undefined; set to 0 with a dummy in the
+regressions); only 372 lack Compustat data.
 
 ## Data availability
 
@@ -514,26 +477,31 @@ WRDS access check, run 2026-11-22 (`src/00_check_wrds_access.py`):
 
 ## EDGAR release times
 
-105,088 8-K Item 2.02 filings from 2018 to 2025 (`src/01_edgar.py`).
+132,380 8-K Item 2.02 filings from 2018 to 2025 (`src/01_edgar.py`), from the
+SEC's current ticker list plus 2,146 CIKs of firms missing from it (mostly
+delisted; task 19).
 
 | Year | Filings | Firms |
 |---|---|---|
-| 2018 | 10,588 | 2,555 |
-| 2019 | 11,015 | 2,691 |
-| 2020 | 11,978 | 2,837 |
-| 2021 | 13,006 | 3,198 |
-| 2022 | 13,977 | 3,362 |
-| 2023 | 14,388 | 3,468 |
-| 2024 | 14,828 | 3,600 |
-| 2025 | 15,308 | 3,736 |
+| 2018 | 15,548 | 3,825 |
+| 2019 | 15,439 | 3,833 |
+| 2020 | 16,110 | 3,877 |
+| 2021 | 17,042 | 4,276 |
+| 2022 | 17,714 | 4,333 |
+| 2023 | 17,334 | 4,250 |
+| 2024 | 16,831 | 4,144 |
+| 2025 | 16,362 | 4,071 |
+
+With delisted firms included, the firm count is roughly flat over time; the
+survivor-only list had climbed from 2,555 firms in 2018 to 3,736 in 2025.
 
 **Release timing:**
 
 | Window (ET) | Filings | Share |
 |---|---|---|
-| Before open (before 09:30) | 38,178 | 36% |
-| During market hours | 7,205 | 7% |
-| After close (16:00 or later) | 59,705 | 57% |
+| Before open (before 09:30) | 47,497 | 36% |
+| During market hours | 8,863 | 7% |
+| After close (16:00 or later) | 76,020 | 57% |
 
 ### Finding: SEC timestamps are UTC, not Eastern
 
@@ -557,16 +525,15 @@ From `src/02_reaction_day.py`:
 
 - **139 distinct mega-cap reaction days** from 2018 to 2025 (6 firms × 32
   scheduled releases = 192, with some days shared by two firms).
-- **18,016 treated releases** (other firms whose reaction day is a mega-cap
-  day), about 17% of all releases. Mega-cap days fall in peak earnings weeks,
-  which is why the same-day announcement count is a key control.
-- 7,191 releases (6.8%) are intraday.
+- **21,723 treated releases** (other firms whose reaction day is a mega-cap
+  day), about 16% of all releases.
+- 8,843 releases (6.7%) are intraday.
 - Four mega-cap 2.02 filings are unscheduled revenue warnings or previews and
   are excluded from treatment (see the [Data guide](data.md)).
 
 | Trading days from nearest mega day | −5 | −4 | −3 | −2 | −1 | **0** | +1 | +2 | +3 | +4 | +5 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Releases | 4,082 | 3,898 | 2,935 | 4,079 | 7,390 | **18,016** | 6,234 | 6,332 | 6,686 | 8,780 | 6,949 |
+| Releases | 5,216 | 4,774 | 3,807 | 5,156 | 8,907 | **21,723** | 7,838 | 7,774 | 8,198 | 11,125 | 8,929 |
 
 ### Validation: Nvidia, 26 August 2026
 
@@ -593,28 +560,26 @@ From `src/03_links.py` (`output/match_rate.md`), checked at each announcement da
 
 | Step | Announcements | % of all |
 |---|---|---|
-| All EDGAR 8-K 2.02 announcements | 105,088 | 100.0% |
-| with GVKEY | 104,975 | 99.9% |
-| with PERMNO (CCM link in range) | 100,901 | 96.0% |
-| with I/B/E/S ticker | 95,859 | 91.2% |
-| US common stock | 86,568 | 82.4% |
-| **US common stock with all three IDs (sample)** | **82,735** | 78.7% |
+| All EDGAR 8-K 2.02 announcements | 132,380 | 100.0% |
+| with GVKEY | 132,267 | 99.9% |
+| with PERMNO (CCM link in range) | 127,689 | 96.5% |
+| with I/B/E/S ticker | 120,789 | 91.2% |
+| US common stock | 113,117 | 85.4% |
+| **US common stock with all three IDs (sample)** | **107,539** | 81.2% |
 
-**Match rate among US common stocks: 95.6%** (target 90%). Every year is
-between 94.8% and 97.0%, and all 196 mega-cap filings link. The 17.6% of
-announcements that are not US common stock are mostly REITs, ADRs, funds and
-firms not listed on NYSE, AMEX or Nasdaq. They are excluded by design.
+**Match rate among US common stocks: 95.1%** (target 90%), every year between
+93.8% and 96.0%.
 
 | Year | US common | All three IDs | Rate |
 |---|---|---|---|
-| 2018 | 8,423 | 8,170 | 97.0% |
-| 2019 | 8,854 | 8,550 | 96.6% |
-| 2020 | 9,700 | 9,352 | 96.4% |
-| 2021 | 10,698 | 10,138 | 94.8% |
-| 2022 | 11,662 | 11,140 | 95.5% |
-| 2023 | 12,043 | 11,478 | 95.3% |
-| 2024 | 12,401 | 11,773 | 94.9% |
-| 2025 | 12,787 | 12,134 | 94.9% |
+| 2018 | 13,216 | 12,690 | 96.0% |
+| 2019 | 13,118 | 12,549 | 95.7% |
+| 2020 | 13,696 | 13,086 | 95.5% |
+| 2021 | 14,637 | 13,735 | 93.8% |
+| 2022 | 15,347 | 14,581 | 95.0% |
+| 2023 | 14,941 | 14,190 | 95.0% |
+| 2024 | 14,341 | 13,597 | 94.8% |
+| 2025 | 13,821 | 13,111 | 94.9% |
 
 ## Early analysis: Nvidia, 26 August 2026
 
@@ -632,4 +597,3 @@ From the proposal, using Bloomberg's calendar of major US firms:
   enough negative surprises.
 - Percentage surprises are badly skewed, which is why SUE is scaled by price
   and winsorized.
-

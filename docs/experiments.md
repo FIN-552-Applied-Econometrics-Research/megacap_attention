@@ -7,13 +7,13 @@ as experiments are completed.
 | ID | Experiment | Status |
 |---|---|---|
 | E0 | [Data pipeline](#e0-data-pipeline) | :white_check_mark: Done (follow-ups listed) |
-| E1 | [Immediate reaction](#e1-immediate-reaction) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.09) |
-| E2 | [Post-announcement drift](#e2-post-announcement-drift) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.29) |
-| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :white_check_mark: Done. No significant alpha; treated − control −3.2%/yr (t = −0.68) |
+| E1 | [Immediate reaction](#e1-immediate-reaction) | :white_check_mark: Done. β₃ = −0.08 (t = −0.33), CI [−0.56, 0.39] |
+| E2 | [Post-announcement drift](#e2-post-announcement-drift) | :white_check_mark: Done. β₃ = 0.35 (t = 0.61), CI [−0.78, 1.49] |
+| E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :white_check_mark: Done. No significant alpha; treated − control −1.3%/yr (t = −0.27) |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | :white_check_mark: Done. Flat across days −3..+3; day 0 not special |
 | E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
-| E6 | [Robustness](#e6-robustness) | :hourglass: In progress (market-adjusted drift, same-week twins, linked firms and co-movement done) |
-| E7 | [Attention check](#e7-attention-check) | :white_check_mark: Done. Attention to treated firms ~3% lower (t = −3.5), but prices respond normally |
+| E6 | [Robustness](#e6-robustness) | :white_check_mark: Mostly done: same-week twins, spillover, return models, delisted firms (release-time fix open) |
+| E7 | [Attention check](#e7-attention-check) | :white_check_mark: Done. Attention to treated firms ~3% lower (t = −4.0), but prices respond normally |
 
 ---
 
@@ -34,7 +34,7 @@ merged with returns, surprises and controls.
 | Abnormal returns (CAR) | `src/06_car.py`, `notebooks/06_car_checks.ipynb` | `data/processed/car.parquet`, CAR columns in `sample.parquet` | :white_check_mark: WRDS spot check passed |
 | Control variables | `src/07_controls.py` | `data/processed/controls.parquet`, columns in `sample.parquet` | :white_check_mark: All < 5% missing except bm (6.4%) |
 | Summary statistics and balance (Tables 1 to 3) | `notebooks/10_summary.ipynb` | `output/tables/summary.tex`, `balance.tex` | :white_check_mark: Balanced (SUE std. diff 0.007) |
-| Add delisted firms (Compustat CIKs) | _optional_ | | Not started |
+| Add delisted firms (2,146 CIKs missing from the SEC list) | `src/15_delisted.py` | `output/tables/main_with_delisted.tex` | :white_check_mark: +27,292 announcements; β₃ unchanged |
 | Earliest release time (EDGAR vs I/B/E/S `anntims`) | _follow-up_ | | Not started |
 | Negative book equity dummy (`neg_be`) | `src/07_controls.py` | | Not started |
 
@@ -45,7 +45,7 @@ merged with returns, surprises and controls.
 - **Key coefficient:** \(\beta_3\) on \(\SUE \times \MegaDay\)
 - **SEs:** clustered by reaction date
 - **Script:** `src/08_regress.py` → `output/tables/main.tex`
-- **Result:** β₃ = −0.03 (t = −0.09), 95% CI [−0.63, 0.58]. See [Results](results.md#main-result-3)
+- **Result (full sample):** β₃ = −0.08 (t = −0.33), 95% CI [−0.56, 0.39]. See [Results](results.md)
 
 ## E2: Post-announcement drift
 
@@ -94,4 +94,4 @@ control firms. If H1 holds, treated firms should get less attention on their
 announcement day.
 
 - **Script:** `src/11_attention.py` → `output/tables/attention.tex`
-- **Result:** abnormal views +23.7% (treated) vs +31.0% (control); MegaDay coefficient −0.029 (t = −3.51) with controls. Driven by the five clustered mega-caps; Nvidia days −0.014 (t = −0.71). See [Results](results.md)
+- **Result (full sample):** abnormal views +23.8% (treated) vs +31.1% (control); MegaDay coefficient −0.032 (t = −4.02) with controls. Driven by the five clustered mega-caps; Nvidia days −0.013 (t = −0.71). See [Results](results.md)

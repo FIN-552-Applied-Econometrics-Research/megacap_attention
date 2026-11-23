@@ -128,7 +128,28 @@ def pull_market(db):
 def load_inputs(user, refresh, permnos):
     if not refresh and PRE_FILE.exists() and MKT_FILE.exists():
         print("Using cached WRDS tables (pass --refresh to re-pull).")
-        return pd.read_parquet(PRE_FILE), pd.read_parquet(MKT_FILE)
+        pre, mkt = pd.read_parquet(PRE_FILE), pd.read_parquet(MKT_FILE)
+        missing = sorted(set(int(p) for p in permnos) - set(pre["permno"].unique()))
+        # only firms that existed before Oct 2017 can be missing for a reason; pull
+        # them all once (firms with no data in the window simply return no rows)
+        done_file = RAW / "crsp_daily_pre_checked.txt"
+        checked = set(int(x) for x in done_file.read_text().split()) if done_file.exists() else set()
+        missing = [p for p in missing if p not in checked]
+        if missing:
+            import wrds
+            print(f"{len(missing):,} PERMNOs not yet checked for Nov 2016 - Sep 2017 returns; "
+                  "pulling (approve the Duo push if prompted)...")
+            db = wrds.Connection(wrds_username=user) if user else wrds.Connection()
+            ids = ",".join(str(p) for p in missing)
+            new = db.raw_sql(
+                f"select permno, dlycaldt as date, dlyret as ret from crsp.dsf_v2 "
+                f"where dlycaldt >= '{PRE_START}' and dlycaldt < '{PRE_END}' "
+                f"and permno in ({ids})", date_cols=["date"])
+            db.close()
+            pre = pd.concat([pre, new], ignore_index=True)
+            pre.to_parquet(PRE_FILE, index=False)
+            done_file.write_text("\n".join(str(p) for p in sorted(checked | set(missing))))
+        return pre, mkt
     import wrds
     print("Connecting to WRDS (approve the Duo push if prompted)...")
     db = wrds.Connection(wrds_username=user) if user else wrds.Connection()
@@ -136,6 +157,31 @@ def load_inputs(user, refresh, permnos):
     mkt = pull_market(db)
     db.close()
     return pre, mkt
+
+
+DELIST_FILE = RAW / "wrds_delist.parquet"        # written by src/15_delisted.py delist
+DELIST_FLAG = RAW / "wrds_delist_included.txt"   # "yes" if dsf_v2 returns already include them
+
+
+def apply_delisting_returns(rets, days):
+    """Add CRSP delisting returns when the daily returns do not already include them.
+    Standard treatment: compound the delisting return into the return on the delisting
+    date, or add it as that day's return when the stock no longer traded."""
+    if not DELIST_FILE.exists():
+        return rets
+    if DELIST_FLAG.exists() and DELIST_FLAG.read_text().strip() == "yes":
+        print("Delisting returns: already included in crsp.dsf_v2 daily returns")
+        return rets
+    dl = pd.read_parquet(DELIST_FILE).dropna(subset=["delret"])
+    dl["date"] = pd.to_datetime(dl["date"]).astype("datetime64[ns]")
+    # move non-trading delisting dates to the next trading day
+    pos = np.searchsorted(days, dl["date"].values.astype("datetime64[ns]"))
+    dl = dl[pos < len(days)].assign(date=lambda x: days[np.searchsorted(days, x["date"].values)])
+    r = rets.merge(dl[["permno", "date", "delret"]], on=["permno", "date"], how="outer")
+    r["ret"] = np.where(r["delret"].notna(),
+                        (1 + r["ret"].fillna(0)) * (1 + r["delret"]) - 1, r["ret"])
+    print(f"Delisting returns: applied {dl['permno'].nunique():,} (from crsp delisting table)")
+    return r.drop(columns="delret").dropna(subset=["ret"])
 
 
 # --------------------------------------------------------------------------
@@ -305,6 +351,7 @@ def main():
     rets = pd.concat([pre[["permno", "date", "ret"]], crsp], ignore_index=True)
     rets["date"] = pd.to_datetime(rets["date"]).astype("datetime64[ns]")
     rets = rets.dropna(subset=["ret"]).drop_duplicates(["permno", "date"])
+    rets = apply_delisting_returns(rets, days)
     R, p_idx = build_matrix(rets, days)
     print(f"Return matrix: {R.shape[0]:,} stocks x {R.shape[1]:,} trading days "
           f"({pd.Timestamp(days[0]).date()} to {pd.Timestamp(days[-1]).date()})")

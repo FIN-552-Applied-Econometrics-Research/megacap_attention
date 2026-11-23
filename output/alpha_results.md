@@ -4,12 +4,12 @@ Factors: Ken French data library, Newey-West 10 lags. Returns in % per day.
 
 | | Treated | Control | Treated - Control |
 |---|---|---|---|
-| CAPM alpha | 0.0164 (t = 1.11) | 0.0301 (t = 1.83) | -0.0122 (t = -0.65) |
-| CAPM alpha, % per year | 4.15 | 7.58 | -3.06 |
-| FF5 + UMD alpha | 0.0119 (t = 0.83) | 0.0262 (t = 1.64) | -0.0127 (t = -0.68) |
-| FF5 + UMD alpha, % per year | 3.00 | 6.61 | -3.20 |
-| Mean LS return | 0.0147 | 0.0296 | -0.0134 |
-| Days | 1,976 | 1,985 | 1,974 |
-| Avg stocks long / short | 70 / 58 | 46 / 41 | |
-| Days dropped | 12 | 8 | |
-| Break-even cost (bp) | 14.0 | 33.8 | |
+| CAPM alpha | 0.0251 (t = 1.76) | 0.0312 (t = 1.83) | -0.0042 (t = -0.23) |
+| CAPM alpha, % per year | 6.32 | 7.85 | -1.06 |
+| FF5 + UMD alpha | 0.0201 (t = 1.47) | 0.0272 (t = 1.64) | -0.0050 (t = -0.27) |
+| FF5 + UMD alpha, % per year | 5.08 | 6.85 | -1.26 |
+| Mean LS return | 0.0237 | 0.0326 | -0.0072 |
+| Days | 1,977 | 1,985 | 1,974 |
+| Avg stocks long / short | 84 / 68 | 55 / 48 | |
+| Days dropped | 11 | 8 | |
+| Break-even cost (bp) | 23.3 | 34.5 | |

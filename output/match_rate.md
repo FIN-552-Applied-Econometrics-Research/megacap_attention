@@ -2,27 +2,27 @@
 
 | Step | Announcements | % of all |
 |---|---|---|
-| All EDGAR 8-K 2.02 announcements | 105,088 | 100.0% |
-| with GVKEY (comp.company) | 104,975 | 99.9% |
-| with PERMNO (CCM link, date in range) | 100,901 | 96.0% |
-| with I/B/E/S ticker | 95,859 | 91.2% |
-| with all three IDs | 95,859 | 91.2% |
-| US common stock (shrcd 10/11, exchcd 1/2/3) | 86,568 | 82.4% |
-| **US common stock with all three IDs (sample)** | 82,735 | 78.7% |
+| All EDGAR 8-K 2.02 announcements | 132,380 | 100.0% |
+| with GVKEY (comp.company) | 132,267 | 99.9% |
+| with PERMNO (CCM link, date in range) | 127,689 | 96.5% |
+| with I/B/E/S ticker | 120,789 | 91.2% |
+| with all three IDs | 120,789 | 91.2% |
+| US common stock (shrcd 10/11, exchcd 1/2/3) | 113,117 | 85.4% |
+| **US common stock with all three IDs (sample)** | 107,539 | 81.2% |
 
-**Match rate among US common stocks: 95.6%** (82,735 of 86,568). Target: at least 90%.
+**Match rate among US common stocks: 95.1%** (107,539 of 113,117). Target: at least 90%.
 
 US common stocks by year:
 
 | Year | Announcements | All three IDs | Rate |
 |---|---|---|---|
-| 2018 | 8,423 | 8,170 | 97.0% |
-| 2019 | 8,854 | 8,550 | 96.6% |
-| 2020 | 9,700 | 9,352 | 96.4% |
-| 2021 | 10,698 | 10,138 | 94.8% |
-| 2022 | 11,662 | 11,140 | 95.5% |
-| 2023 | 12,043 | 11,478 | 95.3% |
-| 2024 | 12,401 | 11,773 | 94.9% |
-| 2025 | 12,787 | 12,134 | 94.9% |
+| 2018 | 13,216 | 12,690 | 96.0% |
+| 2019 | 13,118 | 12,549 | 95.7% |
+| 2020 | 13,696 | 13,086 | 95.5% |
+| 2021 | 14,637 | 13,735 | 93.8% |
+| 2022 | 15,347 | 14,581 | 95.0% |
+| 2023 | 14,941 | 14,190 | 95.0% |
+| 2024 | 14,341 | 13,597 | 94.8% |
+| 2025 | 13,821 | 13,111 | 94.9% |
 
 Common-stock filter source: `ciz` CRSP format. Links are checked at the announcement date (`date_et`).
