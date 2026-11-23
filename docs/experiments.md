@@ -85,7 +85,7 @@ Split E1 and E2 by:
 - **Done:** drop industries linked to the mega-caps and, separately, control for co-movement with the mega-cap (`src/13_robust_linked.py` → `output/tables/robust_linked.tex`). Linked = chips, semiconductor equipment, computer/networking hardware and 195 Compustat Segments customers of the mega-caps (8.1% of the sample). β₃ unchanged in both (CAR(0,+1): −0.016 and −0.030 vs −0.028)
 - Only firms that keep their usual reporting schedule (strategic-timing check)
 - Compare EDGAR release times with Compustat `rdq` and I/B/E/S `anndats`
-- **Done:** drift regression with market-adjusted CAR(+2,+60) instead of market-model (β₃ = 0.16, t = 0.25). The market-model α distorts 60-day drift, see [Results](results.md)
+- **Done:** drift regression under three return models (`src/14_drift_robust.py` → `output/tables/drift_robust.tex`): market model β₃ = −0.19 (t = −0.29), market-adjusted 0.16 (t = 0.25), size/BM-adjusted 0.42 (t = 0.66). Sign depends on the model, significance does not. See [Results](results.md)
 
 ## E7: Attention check
 

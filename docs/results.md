@@ -23,6 +23,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | 7. Attention (Wikipedia pageviews) | [`output/tables/attention.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/attention.tex) | `src/11_attention.py` |
 | 8. Robustness: same-week twins only | [`output/tables/robust_sameweek.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_sameweek.tex) | `src/12_robust_sameweek.py` |
 | 9. Robustness: news spillover (linked firms, co-movement) | [`output/tables/robust_linked.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_linked.tex) | `src/13_robust_linked.py` |
+| 10. Drift under three return models | [`output/tables/drift_robust.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/drift_robust.tex) | `src/14_drift_robust.py` |
 | 5. Main regressions, small and low-coverage halves | [`output/tables/main_halves.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_halves.tex) | `src/08_regress.py` |
 
 | Figure | File | Made by |
@@ -74,6 +75,40 @@ CAR(0,+1) and β₃ > 0 for CAR(+2,+60).
 
 !!! abstract "What β₃ means"
     Across every specification, β₃ is close to zero and far from significant. In the main model a 1 percentage point earnings surprise moves the two-day CAR by 1.99% on an ordinary day (β₁, t = 5.05), and on a mega-cap day by essentially the same amount (β₃ = −0.03, t = −0.09). The 95% confidence interval of [−0.63, 0.58] rules out a change of more than about a third of the normal response in either direction (−32% to +29% of β₁). The drift model gives the same answer (β₃ = −0.19, t = −0.29, CI [−1.48, 1.10]), and so do the small-firm and low-coverage halves, where crowding out should be strongest. Their CAR(0,+1) point estimates are slightly negative (about −10% of β₁), but they are insignificant, and the matching drift coefficients have the wrong sign for H1. Fama-MacBeth estimates agree. We therefore find no evidence that mega-cap earnings days either crowd out or crowd in the pricing of other firms' news in 2018 to 2025. Two caveats bound this null. The interval still includes effects as large as the 17% macro-day effect of Hirshleifer and Sheng (2022). And β₁ in the drift model is itself insignificant: there is little post-earnings drift in this period for a distraction effect to create.
+
+## Robustness: drift under three return models (Table 10)
+
+From `src/14_drift_robust.py`. The drift regression (Table 4, column 3) with
+three different abnormal-return models for CAR(+2,+60):
+
+- **Market model:** return − (α̂ + β̂ × market), estimated over days −250 to −30
+- **Market-adjusted:** return − market, with nothing estimated
+- **Size/BM-adjusted:** return − the equal-weighted return of the firm's 5×5
+  size × book-to-market cell, formed each quarter (a simplified DGTW benchmark;
+  breakpoints from the sample universe, median 68 stocks per cell-day)
+
+| | Market model | Market-adjusted | Size/BM-adjusted |
+|---|---|---|---|
+| SUE (β₁) | −0.913 (t = −0.60) | −0.675 (−0.47) | −1.041 (−0.69) |
+| MegaDay (β₂) | 0.622 (1.64) | 0.414 (1.11) | 0.210 (0.67) |
+| **SUE × MegaDay (β₃)** | **−0.191 (−0.29)** | **0.161 (0.25)** | **0.417 (0.66)** |
+| 95% CI for β₃ | [−1.48, 1.10] | [−1.08, 1.40] | [−0.83, 1.66] |
+| Mean drift (%) | −1.44 | −0.38 | −0.44 |
+| N | 24,145 | 24,145 | 23,049 |
+
+!!! info "Why the versions differ (sentence for the paper)"
+    The market model subtracts each stock's estimated pre-announcement alpha
+    for 59 days, so stocks that fell before bad news (or rose before good
+    news) mechanically show a reversal-like drift. Market-adjusted and
+    size/BM-adjusted returns carry no such trend, which moves β₃ from −0.19
+    to +0.16 and +0.42 — towards the sign crowding out predicts — but none
+    is close to significant and all three confidence intervals overlap.
+
+The conclusion does not depend on the return model: there is no significant
+mega-cap-day effect on drift, and no significant post-earnings drift at all
+(β₁) in 2018 to 2025. The marginal MegaDay level effect in the market-model
+drift (β₂ = 0.62, t = 1.64) shrinks to 0.21 (t = 0.67) with the size/BM
+benchmark, so it was an artefact of the estimated alpha too.
 
 ## Robustness: news spillover (Table 9)
 
