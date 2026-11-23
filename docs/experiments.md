@@ -11,7 +11,7 @@ as experiments are completed.
 | E2 | [Post-announcement drift](#e2-post-announcement-drift) | :white_check_mark: Done. β₃ ≈ 0 (t = −0.29) |
 | E3 | [Calendar-time portfolio](#e3-calendar-time-portfolio) | :hourglass: Next |
 | E4 | [Event-time placebo](#e4-event-time-placebo) | Planned |
-| E5 | [Heterogeneity](#e5-heterogeneity) | Planned |
+| E5 | [Heterogeneity](#e5-heterogeneity) | :hourglass: In progress (market-move control done) |
 | E6 | [Robustness](#e6-robustness) | Planned |
 | E7 | [Attention check](#e7-attention-check) | Planned |
 
@@ -72,6 +72,7 @@ Split E1 and E2 by:
 - firm size (terciles)
 - analyst coverage
 - whether the mega-cap itself moved the market that day (|market return| above or below median)
+- **Done (card 12):** |market return| and its interaction with SUE added to E1/E2. β₃ unchanged (0.05, t = 0.15). See [Results](results.md)
 
 ## E6: Robustness
 

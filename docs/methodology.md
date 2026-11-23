@@ -29,27 +29,52 @@ the adjacent days (±1) because attention may still be diverted.
 
 ## Main regression
 
-For each firm-quarter \(i\):
+For each firm-quarter \(i\) in the 1:1 matched sample:
 
 \[
-\CAR_i(0,+1) = \alpha + \beta_1 \SUE_i + \beta_2 \MegaDay_i
-             + \beta_3 \left(\SUE_i \times \MegaDay_i\right)
-             + \gamma' X_i + \varepsilon_i
+\CAR_i = \alpha + \beta_1 \SUE_i + \beta_2 \MegaDay_i
+       + \beta_3 \left(\SUE_i \times \MegaDay_i\right)
+       + \gamma' X_i + \delta\,\text{SameDay}_i \times \SUE_i
+       + \text{FE}_{\text{industry}} + \text{FE}_{\text{quarter}} + \varepsilon_i
 \]
 
-| Term | Definition |
+estimated for \(\CAR_i(0,+1)\) (immediate reaction) and \(\CAR_i(+2,+60)\)
+(drift). Script: `src/08_regress.py`.
+
+| Term | Definition (as implemented) |
 |---|---|
-| \(\CAR_i(0,+1)\) | Two-day cumulative abnormal return against a market model (MacKinlay, 1997) |
-| \(\SUE_i\) | (Actual EPS − I/B/E/S consensus) / price, winsorized |
-| \(X_i\) | Size, book-to-market, analyst coverage, past returns, industry and quarter fixed effects, and the number of other announcements that day plus its interaction with \(\SUE_i\) |
+| \(\CAR_i\) | Market-model CAR (estimation window days −250 to −30), in % |
+| \(\SUE_i\) | (Actual EPS − median I/B/E/S consensus) / price, winsorized 1/99 by quarter, in % |
+| \(\MegaDay_i\) | 1 if the reaction day equals a mega-cap's reaction day |
+| \(X_i\) | Log market cap, book-to-market, a negative-book-equity dummy, log(1 + analysts), past return (months −12 to −2), same-day announcement count |
+| Book-to-market | Set to 0 for negative or zero book equity, with the dummy absorbing the difference |
+| SameDay × SUE | The busy-day interaction, so β₃ is not a repeat of Hirshleifer, Lim and Teoh (2009) |
+| Fixed effects | Fama-French 12 industry and calendar quarter |
+| Standard errors | Clustered by reaction day (Petersen, 2009) |
 
-The same-day announcement count matters: mega-cap days fall in busy weeks, and
-without this control we would only repeat Hirshleifer, Lim and Teoh (2009).
+- **H1 (crowding out):** \(\beta_3 < 0\) for CAR(0,+1), \(\beta_3 > 0\) for CAR(+2,+60)
+- **H2 (crowding in):** the reverse
 
-- **H1 (crowding out):** \(\beta_3 < 0\)
-- **H2 (crowding in):** \(\beta_3 > 0\)
+### Market move vs distraction
 
-Standard errors are clustered by reaction date (Petersen, 2009).
+A mega-cap report often moves the whole market, and a large market move can
+change how prices respond to firm news for reasons other than attention. The
+second version of each model adds \(|r_{m,t}|\), the absolute CRSP
+value-weighted market return on the reaction day, and
+\(|r_{m,t}| \times \SUE_i\). With these terms, \(\beta_3\) measures only the
+part of the mega-cap-day effect not explained by the size of the market move.
+
+### Where crowding out should be strongest
+
+Both models are re-estimated on the **small-firm half** (market cap at or
+below the within-quarter median) and the **low-coverage half** (analyst count
+at or below the within-quarter median).
+
+### Fama-MacBeth check
+
+The model (without quarter effects) is also run quarter by quarter;
+\(\beta_3\) is the average of the quarterly estimates, with a time-series
+*t*-statistic.
 
 ## Return prediction
 
