@@ -21,6 +21,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | 4. Main regressions, all firms (base and + market move) | [`output/tables/main.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main.tex) | `src/08_regress.py` |
 | 6. Calendar-time portfolio alphas | [`output/tables/alpha.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/alpha.tex) | `src/09_portfolio.py` |
 | 7. Attention (Wikipedia pageviews) | [`output/tables/attention.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/attention.tex) | `src/11_attention.py` |
+| 8. Robustness: same-week twins only | [`output/tables/robust_sameweek.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_sameweek.tex) | `src/12_robust_sameweek.py` |
 | 5. Main regressions, small and low-coverage halves | [`output/tables/main_halves.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_halves.tex) | `src/08_regress.py` |
 
 | Figure | File | Made by |
@@ -72,6 +73,43 @@ CAR(0,+1) and β₃ > 0 for CAR(+2,+60).
 
 !!! abstract "What β₃ means"
     Across every specification, β₃ is close to zero and far from significant. In the main model a 1 percentage point earnings surprise moves the two-day CAR by 1.99% on an ordinary day (β₁, t = 5.05), and on a mega-cap day by essentially the same amount (β₃ = −0.03, t = −0.09). The 95% confidence interval of [−0.63, 0.58] rules out a change of more than about a third of the normal response in either direction (−32% to +29% of β₁). The drift model gives the same answer (β₃ = −0.19, t = −0.29, CI [−1.48, 1.10]), and so do the small-firm and low-coverage halves, where crowding out should be strongest. Their CAR(0,+1) point estimates are slightly negative (about −10% of β₁), but they are insignificant, and the matching drift coefficients have the wrong sign for H1. Fama-MacBeth estimates agree. We therefore find no evidence that mega-cap earnings days either crowd out or crowd in the pricing of other firms' news in 2018 to 2025. Two caveats bound this null. The interval still includes effects as large as the 17% macro-day effect of Hirshleifer and Sheng (2022). And β₁ in the drift model is itself insignificant: there is little post-earnings drift in this period for a distraction effect to create.
+
+## Robustness: same-week twins only (Table 8)
+
+From `src/12_robust_sameweek.py`. 35% of treated announcements had no
+same-industry twin in their own event week and borrowed one from elsewhere in
+the quarter. This keeps only the pairs matched within the same week and re-runs
+Table 4 with identical controls and clustering.
+
+| | CAR(0,+1), all twins | CAR(0,+1), same week | CAR(+2,+60), all twins | CAR(+2,+60), same week |
+|---|---|---|---|---|
+| β₃, base | −0.028 (t = −0.09) | **−0.314 (t = −0.96)** | −0.191 (−0.29) | −0.018 (−0.02) |
+| 95% CI | [−0.63, 0.58] | [−0.96, 0.33] | [−1.48, 1.10] | [−1.65, 1.61] |
+| β₃, + market move | 0.046 (0.15) | −0.186 (−0.57) | −0.222 (−0.35) | −0.145 (−0.18) |
+| N | 24,815 | 16,058 | 24,145 | 15,388 |
+
+| Mega-cap | Treated | Same-week twin | Kept |
+|---|---|---|---|
+| NVDA | 1,105 | 1,100 | 100% |
+| AAPL | 3,467 | 3,102 | 89% |
+| AMZN | 3,143 | 2,295 | 73% |
+| GOOGL | 2,922 | 2,113 | 72% |
+| MSFT | 3,257 | 2,210 | 68% |
+| META | 4,530 | 1,714 | 38% |
+| **All** | **12,568** | **8,121** | **65%** |
+
+Events with at least one same-week pair: 103 of 139.
+
+!!! info "Does the null hold?"
+    **Yes.** Keeping only same-week twins costs 35% of the treated
+    announcements (Meta keeps only 38%) and 36 of 139 events. The immediate-
+    reaction β₃ moves from −0.03 to −0.31, in the crowding-out direction
+    (about 15% of the normal response of 2.04), but it stays far from
+    significant (t = −0.96) and its confidence interval overlaps the
+    baseline almost completely. With the market-move control it is −0.19
+    (t = −0.57). The drift β₃ stays at zero. The borrowed twins were not
+    hiding a crowding-out effect; at most they diluted a small one we cannot
+    distinguish from zero.
 
 ## Attention check (Table 7)
 
