@@ -185,9 +185,19 @@ def nvidia_check(client):
 # --------------------------------------------------------------------------
 # Main
 # --------------------------------------------------------------------------
+EXTRA_CIKS = RAW_DIR / "extra_ciks.txt"   # written by src/15_delisted.py (delisted firms)
+
+
 def load_ciks(client):
+    """Current SEC ticker list, plus extra CIKs (e.g. delisted firms) if listed."""
     data = client.get_json(TICKERS_URL)
-    return sorted({int(v["cik_str"]) for v in data.values()})
+    ciks = {int(v["cik_str"]) for v in data.values()}
+    if EXTRA_CIKS.exists():
+        extra = {int(x) for x in EXTRA_CIKS.read_text().split()}
+        print(f"Adding {len(extra - ciks):,} extra CIKs from {EXTRA_CIKS.name} "
+              "(firms missing from the current ticker list)")
+        ciks |= extra
+    return sorted(ciks)
 
 
 def build_parquet():

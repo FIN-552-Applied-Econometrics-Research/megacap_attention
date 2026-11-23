@@ -31,19 +31,18 @@ release to find these firms and test whether their news is priced more slowly
 |---|---|---|
 | 1 | WRDS access check | :white_check_mark: Done. Sample ends 2025-12-31 (CRSP) |
 | 1 | Shared repo structure | :white_check_mark: Done |
-| 1 | EDGAR 8-K Item 2.02 release times | :white_check_mark: Done. 105,088 filings |
-| 1 | Reaction days and mega-cap days | :white_check_mark: Done. 139 mega-cap days, 18,016 treated releases |
-| 2 | CIK → GVKEY → PERMNO → I/B/E/S links | :white_check_mark: Done. 95.6% of US common stocks, 82,735 in sample |
-| 2 | Earnings surprise (SUE) | :white_check_mark: Done. 59,775 announcements, 28% misses |
-| 2 | Treated / control matching | :white_check_mark: Done. 12,568 treated on 139 events |
+| 1 | EDGAR 8-K Item 2.02 release times | :white_check_mark: Done. 132,380 filings (incl. delisted firms) |
+| 1 | Reaction days and mega-cap days | :white_check_mark: Done. 139 mega-cap days |
+| 2 | CIK → GVKEY → PERMNO → I/B/E/S links | :white_check_mark: Done. 95.1% of US common stocks |
+| 2 | Earnings surprise (SUE) | :white_check_mark: Done. 75,050 announcements |
+| 2 | Treated / control matching | :white_check_mark: Done. 15,284 treated on 139 events |
 | 2 | Abnormal returns (CAR) | :white_check_mark: Done. WRDS spot check passed |
-| 2 | Control variables | :white_check_mark: Done. bm 6.4% missing (negative book equity) |
-| 2 | Summary statistics and balance | :white_check_mark: Done. Groups balanced; SUE std. diff 0.007 |
-| 3 | Main regressions (β₃) | :white_check_mark: Done. No crowding out or in: β₃ ≈ 0, CI rules out effects beyond ±⅓ of the normal response |
-| 3 | Calendar-time portfolio alphas | :white_check_mark: Done. No significant alpha in either group |
-| 3 | Event-time placebo | :white_check_mark: Done. No peak at the mega-cap day |
-| 3 | Attention check (Wikipedia) | :white_check_mark: Done. Attention to treated firms falls about 3%, prices unaffected |
-| 3 | Robustness | :hourglass: Next |
+| 2 | Control variables | :white_check_mark: Done |
+| 2 | Summary statistics and balance | :white_check_mark: Done. Groups balanced |
+| 3 | Main regressions (β₃) | :white_check_mark: Done. β₃ ≈ 0; CI rules out effects beyond −30% / +21% of the normal response |
+| 3 | Portfolio alphas, placebo | :white_check_mark: Done. No significant alpha; no peak at the mega-cap day |
+| 3 | Attention check (Wikipedia) | :white_check_mark: Done. Attention to treated firms falls about 3% (t = −4.0), prices unaffected |
+| 3 | Robustness: same-week twins, spillover, return models, delisted firms | :white_check_mark: Done. Null holds in all |
 
 ## Quick start
 

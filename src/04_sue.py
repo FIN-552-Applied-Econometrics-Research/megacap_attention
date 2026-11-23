@@ -109,8 +109,8 @@ def pull_ibes(db, refresh):
     return out
 
 
-def pull_crsp(db, permnos, refresh):
-    path = RAW / "crsp_daily.parquet"
+def pull_crsp(db, permnos, refresh, path=None):
+    path = path or RAW / "crsp_daily.parquet"
     if path.exists() and not refresh:
         return pd.read_parquet(path)
     have = table_columns(db, "crsp", "dsf_v2")
@@ -146,7 +146,20 @@ def load_data(user, refresh, permnos):
         print("Using cached WRDS tables (pass --refresh to re-pull).")
         ib = {n: pd.read_parquet(RAW / f"wrds_{n}.parquet")
               for n in ("ibes_actuals", "ibes_consensus")}
-        return ib, pd.read_parquet(RAW / "crsp_daily.parquet")
+        crsp = pd.read_parquet(RAW / "crsp_daily.parquet")
+        missing = sorted(set(int(p) for p in permnos) - set(crsp["permno"].unique()))
+        if missing:
+            # new firms (e.g. delisted ones added by 15_delisted.py): pull only those
+            import wrds
+            print(f"{len(missing):,} PERMNOs not in crsp_daily.parquet; pulling them "
+                  "(approve the Duo push if prompted)...")
+            db = wrds.Connection(wrds_username=user) if user else wrds.Connection()
+            new = pull_crsp(db, missing, refresh=True, path=RAW / "crsp_daily_new.parquet")
+            db.close()
+            crsp = pd.concat([crsp, new], ignore_index=True)
+            crsp.to_parquet(RAW / "crsp_daily.parquet", index=False)
+            (RAW / "crsp_daily_new.parquet").unlink(missing_ok=True)
+        return ib, crsp
     import wrds
     print("Connecting to WRDS (approve the Duo push if prompted)...")
     db = wrds.Connection(wrds_username=user) if user else wrds.Connection()

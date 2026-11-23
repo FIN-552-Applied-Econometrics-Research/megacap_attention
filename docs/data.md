@@ -12,16 +12,16 @@ so everyone's copy matches the code.
 
 | File | Built by | Source | Rows | Coverage | Status |
 |---|---|---|---|---|---|
-| `data/raw/edgar_202.parquet` | `src/01_edgar.py` | SEC EDGAR submissions API | 105,088 | 2018-01-01 to 2025-12-31 | Done |
-| `data/processed/announcements.parquet` | `src/02_reaction_day.py` | edgar_202 + NYSE calendar | 105,088 | 2018 to 2025 | Done |
+| `data/raw/edgar_202.parquet` | `src/01_edgar.py` | SEC EDGAR submissions API (current list + 2,146 missing CIKs) | 132,380 | 2018-01-01 to 2025-12-31 | Done |
+| `data/processed/announcements.parquet` | `src/02_reaction_day.py` | edgar_202 + NYSE calendar | 132,380 | 2018 to 2025 | Done |
 | `data/processed/megacap_days.csv` | `src/02_reaction_day.py` | edgar_202 | 196 (192 scheduled) | 2018 to 2025 | Done |
 | `data/raw/crsp_daily.parquet` | `src/04_sue.py` | WRDS `crsp.dsf_v2` (sample PERMNOs) | 5,527,421 | 2017-10 to 2025-12 | Done |
-| `data/processed/sue.parquet` | `src/04_sue.py` | WRDS `ibes.actu_epsus`, `ibes.statsumu_epsus`, `crsp.dsf_v2` | 59,775 | 2018 to 2025 | Done |
-| `data/processed/links.parquet` | `src/03_links.py` | WRDS `comp.company`, `crsp.ccmxpf_lnkhist`, `wrdsapps` ibcrsphist, `crsp.stksecurityinfohist` | 105,088 (82,735 in sample) | 2018 to 2025 | Done |
+| `data/processed/sue.parquet` | `src/04_sue.py` | WRDS `ibes.actu_epsus`, `ibes.statsumu_epsus`, `crsp.dsf_v2` | 75,050 | 2018 to 2025 | Done |
+| `data/processed/links.parquet` | `src/03_links.py` | WRDS `comp.company`, `crsp.ccmxpf_lnkhist`, `wrdsapps` ibcrsphist, `crsp.stksecurityinfohist` | 132,380 (107,539 in sample) | 2018 to 2025 | Done |
 | `data/raw/crsp_daily_pre.parquet`, `wrds_market.parquet` | `src/06_car.py` | WRDS `crsp.dsf_v2` (Nov 2016 – Sep 2017), CRSP VW index (indno 1000200) | | 2016-11 to 2025-12 | Done |
-| `data/processed/sample.parquet` | `src/05_match.py` (+ `06`, `07` add columns) | Matched treated + controls | 49,689 rows | 2018 to 2025 | Done |
-| `data/processed/car.parquet`, `ar_paths.parquet` | `src/06_car.py` | CRSP returns + VW market | 59,775 | 2018 to 2025 | Done |
-| `data/processed/controls.parquet` | `src/07_controls.py` | CRSP daily, `comp.funda`, I/B/E/S, EDGAR | 59,775 | 2018 to 2025 | Done |
+| `data/processed/sample.parquet` | `src/05_match.py` (+ `06`, `07` add columns) | Matched treated + controls | 60,538 rows | 2018 to 2025 | Done |
+| `data/processed/car.parquet`, `ar_paths.parquet` | `src/06_car.py` | CRSP returns + VW market | 75,050 | 2018 to 2025 | Done |
+| `data/processed/controls.parquet` | `src/07_controls.py` | CRSP daily, `comp.funda`, I/B/E/S, EDGAR | 75,050 | 2018 to 2025 | Done |
 | `data/raw/ff_factors_daily.parquet` | `src/09_portfolio.py` | Ken French data library (5 factors 2x3 + momentum, daily, in %) | | 1963-07 to 2026-09 | Done |
 | `data/processed/portfolio_daily.parquet` | `src/09_portfolio.py` | Daily long-short returns, counts and turnover, treated and control | about 1,980 days | 2018 to 2025 | Done |
 
@@ -62,7 +62,7 @@ exact time the SEC accepted it.
 
 ### Known limitations
 
-- **Survivorship:** the firm list comes from SEC's *current*
+- **Survivorship (fixed in task 19):** the firm list originally came from SEC's *current*
   `company_tickers.json`, so firms delisted or acquired between 2018 and 2025
   are missing. That is why 2018 has fewer firms (2,555) than 2025 (3,736). The
   planned fix is to add CIKs from Compustat `comp.company`.
