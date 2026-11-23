@@ -25,6 +25,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | 8. Robustness: same-week twins only | [`output/tables/robust_sameweek.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_sameweek.tex) | `src/12_robust_sameweek.py` |
 | 9. Robustness: news spillover | [`output/tables/robust_linked.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/robust_linked.tex) | `src/13_robust_linked.py` |
 | 10. Drift under three return models | [`output/tables/drift_robust.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/drift_robust.tex) | `src/14_drift_robust.py` |
+| 12. Over time, 2005–2025 | [`output/tables/over_time.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/over_time.tex) | `src/16_longrun.py analyze` |
 | 11. Adding delisted firms: before vs after | [`output/tables/main_with_delisted.tex`](https://github.com/FIN-552-Applied-Econometrics-Research/megacap_attention/blob/main/output/tables/main_with_delisted.tex) | `src/15_delisted.py report` |
 
 | Figure | File | Made by |
@@ -32,6 +33,7 @@ Every table is a self-contained LaTeX `table` float (needs
 | SUE distribution | `output/figures/sue_hist.png` | `src/04_sue.py` |
 | CAR paths, treated vs control | `output/figures/car_paths.png` | `notebooks/06_car_checks.ipynb` |
 | Event-time placebo | `output/figures/placebo.png` | `src/10_placebo.py` |
+| β₃ by period, 2005–2025 | `output/figures/beta3_over_time.pdf` | `src/16_longrun.py analyze` |
 
 ## Main result (β₃)
 
@@ -94,6 +96,61 @@ CAR(0,+1) and β₃ > 0 for CAR(+2,+60).
     β₃ essentially unchanged (−0.08 → −0.02 for CAR(0,+1); 0.35 → 0.52 for
     drift; all insignificant), so the market move was not hiding any crowding
     out.
+
+## Over time: was the effect ever there? (Table 12)
+
+From `src/16_longrun.py`. A separate 2005–2025 sample (8-K Item 2.02 exists
+from August 2004) built with the same pipeline. Mega-caps are chosen by a
+fixed rule: the 6 largest companies by CRSP market value on the last trading
+day of the previous year (`output/megacaps_by_year.csv`). Early years are GE,
+Exxon, Microsoft, Citigroup, Walmart and P&G; Apple from 2010, Alphabet from
+2014, Amazon from 2016, Nvidia from 2024. 195,324 announcements with SUE,
+32,906 treated on 349 mega-cap days.
+
+![β₃ by period](assets/beta3_over_time.png)
+
+| | 2005–2010 | 2011–2017 | 2018–2025 |
+|---|---|---|---|
+| **β₃, CAR(0,+1)** | **−0.324 (t = −1.14)** | **−0.186 (t = −0.47)** | **0.153 (t = 0.62)** |
+| 95% CI | [−0.88, 0.23] | [−0.96, 0.59] | [−0.33, 0.64] |
+| CI width | 1.12 | 1.55 | 0.96 |
+| Normal response β₁ | 0.882 | 3.364 | 1.746 |
+| CI as % of β₁ | −100% to +26% | −29% to +18% | −19% to +37% |
+| β₃, CAR(+2,+60) | 0.271 (0.56) | −0.721 (−0.71) | 0.085 (0.18) |
+| Treated / mega-cap days | 8,952 / 110 | 7,897 / 96 | 15,619 / 143 |
+| **Busy-day benchmark:** SUE × same-day count (per 100), all announcements | **0.205 (t = 2.28)** | **0.356 (t = 3.91)** | 0.014 (t = 0.30) |
+
+Periods equal? CAR(0,+1): χ²(2) = 1.90, p = 0.39; drift: p = 0.57. Trend in
+β₃ per decade: 0.20 (t = 0.65) for CAR(0,+1), −0.18 (t = −0.36) for drift.
+
+!!! abstract "Did the effect exist before 2018?"
+    **There is no significant mega-cap-day effect in any period.** The point
+    estimates move from the crowding-out direction in 2005–2010 (−0.32) and
+    2011–2017 (−0.19) to slightly positive in 2018–2025 (+0.15), a pattern
+    consistent with an effect that faded. But none is significant, the three
+    periods cannot be told apart (p = 0.39), and the time trend is
+    insignificant.
+
+    **How sure we are depends on the period.** For 2011–2017 and 2018–2025
+    the intervals rule out effects larger than about 20% to 30% of the normal
+    earnings response. For 2005–2010 the normal response itself was small
+    (β₁ = 0.88, the financial-crisis years), so the interval still allows a
+    mega-cap day to cancel most of it. We cannot rule out a sizeable early
+    effect; we can rule out a large one since 2011.
+
+!!! info "The busy-day benchmark"
+    The classic test of Hirshleifer, Lim and Teoh (2009), more same-day
+    announcements × surprise, does **not** show slower reactions on busy days
+    at any point since 2005. In 2005–2017 busy days have *stronger* reactions
+    (significant), and since 2018 there is no difference. Their 1995–2004
+    finding of distraction on busy days does not carry into our period; the
+    market had already adapted to many announcements at once before the
+    mega-cap era.
+
+Note: 2018–2025 here uses the year-by-year rule (it includes Berkshire, Tesla,
+J&J and UnitedHealth in some years and Nvidia only from 2024), so it differs
+from the main analysis, which fixes the six AI-era mega-caps. Both find
+β₃ ≈ 0.
 
 ## Adding delisted firms (Table 11)
 

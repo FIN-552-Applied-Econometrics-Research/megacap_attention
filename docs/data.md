@@ -23,6 +23,8 @@ so everyone's copy matches the code.
 | `data/processed/car.parquet`, `ar_paths.parquet` | `src/06_car.py` | CRSP returns + VW market | 75,050 | 2018 to 2025 | Done |
 | `data/processed/controls.parquet` | `src/07_controls.py` | CRSP daily, `comp.funda`, I/B/E/S, EDGAR | 75,050 | 2018 to 2025 | Done |
 | `data/raw/ff_factors_daily.parquet` | `src/09_portfolio.py` | Ken French data library (5 factors 2x3 + momentum, daily, in %) | | 1963-07 to 2026-09 | Done |
+| `data/longrun/` (raw, processed) | `src/16_longrun.py` | Same pipeline, 2005–2025, year-by-year mega-caps | 195,324 with SUE | 2005 to 2025 | Done |
+| `data/megacaps_by_year.csv` | `src/16_longrun.py prepare` | Top 6 companies by CRSP market value at each year start (shareable copy without CRSP values in `output/`) | 126 | 2005 to 2025 | Done |
 | `data/processed/portfolio_daily.parquet` | `src/09_portfolio.py` | Daily long-short returns, counts and turnover, treated and control | about 1,980 days | 2018 to 2025 | Done |
 
 ---

@@ -43,6 +43,7 @@ release to find these firms and test whether their news is priced more slowly
 | 3 | Portfolio alphas, placebo | :white_check_mark: Done. No significant alpha; no peak at the mega-cap day |
 | 3 | Attention check (Wikipedia) | :white_check_mark: Done. Attention to treated firms falls about 3% (t = −4.0), prices unaffected |
 | 3 | Robustness: same-week twins, spillover, return models, delisted firms | :white_check_mark: Done. Null holds in all |
+| 3 | Over time, 2005–2025 | :white_check_mark: Done. No significant effect in any period |
 
 ## Quick start
 
